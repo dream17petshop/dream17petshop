@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="format-detection" content="telephone=no">
+
+    <title>夢17精品寵物美容旅館</title>
+    
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">    
+
+    <!-- 引入高級感字體 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://unpkg.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { 
+            theme: {
+                extend: {
+                    colors: {
+                        bg: '#FDFBF7',
+                        card: '#FFFFFF',
+                        primary: '#334155',
+                        secondary: '#64748B',
+                        pink: '#FFD1DC',
+                        pinkDark: '#FFB7B2',
+                        blue: '#AEC6CF',
+                        blueDark: '#9BB8CC',
+                        gold: '#B38728',
+                        border: '#E2E8F0',
+                        // 新增玫瑰金色系
+                        roseGold: {
+                            light: '#FADADD',
+                            DEFAULT: '#E0BFB8', // 主色
+                            dark: '#C4A48C',
+                            gradient: 'linear-gradient(135deg, #E0BFB8 0%, #C4A48C 100%)',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        display: ['"Playfair Display"', 'serif'],
+                        elegant: ['"Cormorant Garamond"', 'serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'hover': '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+                        'gold-glow': '0 0 20px rgba(196, 164, 140, 0.4)',
+                    },
+                    backgroundImage: {
+                        'shimmer': 'linear-gradient(45deg, rgba(255,255,255,0) 40%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 60%)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js" defer></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+
+    <style>
+        body { 
+            background-color: #FDFBF7; 
+            font-family: 'Noto Sans TC', sans-serif;
+            color: #334155; 
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.6;
+        }
+        h1, h2, h3, .font-serif { font-family: 'Noto Serif TC', serif; }
+
+        .clean-card { 
+            background: #FFFFFF; 
+            border: 1px solid #E2E8F0; 
+            border-radius: 20px; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        .clean-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+        }
+
+        /* --- 首頁按鈕卡片樣式 (玫瑰金漸層優化版 - 尺寸縮小與字體描邊) --- */
+        .hero-btn-card {
+            position: relative;
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: row; 
+            align-items: center;
+            padding: 0;
+            height: 100px; /* 縮小高度：原本 140px -> 100px */
+        }
+        
+        /* 漸層背景層 */
+        .hero-btn-card .gradient-bg {
+            position: absolute;
+            inset: 0;
+            opacity: 0.9;
+            transition: all 0.5s ease;
+            z-index: 0;
+        }
+        
+        /* Shimmer 光澤動畫層 */
+        .hero-btn-card .shimmer-layer {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(45deg, rgba(255,255,255,0) 40%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 60%);
+            background-size: 200% 100%;
+            animation: shimmer 2.5s infinite;
+            opacity: 0.3;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        /* 美容按鈕樣式 - 玫瑰金 */
+        .hero-btn-card.pink .gradient-bg {
+            background: linear-gradient(135deg, #FFD1DC 0%, #E0BFB8 100%);
+        }
+        .hero-btn-card.pink:hover {
+            border-color: #FFD1DC;
+            box-shadow: 0 10px 20px -5px rgba(224, 191, 184, 0.5);
+        }
+        .hero-btn-card.pink:hover .gradient-bg {
+            opacity: 1;
+        }
+        .hero-btn-card.pink .icon-wrapper {
+            background: rgba(255, 255, 255, 0.3);
+            color: #fff;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .hero-btn-card.pink:hover .icon-wrapper {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.5);
+        }
+        
+        /* 文字描邊與樣式 */
+        .hero-btn-card.pink .hero-content h3,
+        .hero-btn-card.pink .hero-content p {
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1), 0 0 1px rgba(255,255,255,0.5); /* 增加白色描邊效果 */
+            -webkit-text-stroke: 0.3px rgba(255,255,255,0.4); /* 針對 Webkit 瀏覽器的細微描邊 */
+        }
+
+        /* 住宿按鈕樣式 - 玫瑰金變體 */
+        .hero-btn-card.blue .gradient-bg {
+            background: linear-gradient(135deg, #E0BFB8 0%, #C4A48C 100%);
+        }
+        .hero-btn-card.blue:hover {
+            border-color: #C4A48C;
+            box-shadow: 0 10px 20px -5px rgba(196, 164, 140, 0.5);
+        }
+        .hero-btn-card.blue:hover .gradient-bg {
+            opacity: 1;
+        }
+        .hero-btn-card.blue .icon-wrapper {
+            background: rgba(255, 255, 255, 0.3);
+            color: #fff;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .hero-btn-card.blue:hover .icon-wrapper {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.5);
+        }
+        
+        /* 文字描邊與樣式 */
+        .hero-btn-card.blue .hero-content h3,
+        .hero-btn-card.blue .hero-content p {
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1), 0 0 1px rgba(255,255,255,0.5);
+            -webkit-text-stroke: 0.3px rgba(255,255,255,0.4);
+        }
+
+        .icon-wrapper {
+            width: 64px; height: 64px; /* 縮小圖標容器：原本 80px -> 64px */
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin-left: 1.5rem; margin-right: 1rem; /* 調整間距 */
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-content {
+            flex: 1;
+            text-align: left;
+            padding-right: 1.5rem; /* 調整右側間距 */
+            position: relative;
+            z-index: 2;
+        }
+
+        /* --- 房型卡片樣式 --- */
+        .room-card {
+            background: white; border-radius: 16px; overflow: hidden;
+            box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease; border: 1px solid #F1F5F9;
+            min-width: 260px;
+        }
+        .room-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08); }
+        
+        /* --- 亮點卡片 --- */
+        .feature-card {
+            background: rgba(255, 255, 255, 0.8); border-radius: 20px;
+            padding: 1.5rem; text-align: center; border: 1px solid #F1F5F9;
+            transition: all 0.3s ease;
+            min-width: 140px;
+        }
+        .feature-card:hover { background: #FFFFFF; transform: scale(1.02); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08); }
+        .feature-icon {
+            width: 56px; height: 56px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1rem; color: white;
+        }
+
+        /* --- 輸入框樣式 --- */
+        .soft-input {
+            width: 100%; background: #FFFFFF; border: 1px solid #E2E8F0;
+            border-radius: 12px; padding: 0.8rem 1rem; font-size: 16px; color: #334155;
+            transition: all 0.2s ease; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        .soft-input:focus {
+            border-color: #B38728;
+            box-shadow: 0 0 0 3px rgba(179, 135, 40, 0.1);
+            outline: none;
+        }
+        .soft-input::placeholder { color: #94A3B8; }
+
+        /* --- Toast 通知 --- */
+        .toast-enter { animation: slide-down 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes slide-down {
+            from { transform: translate(-50%, -100%); opacity: 0; }
+            to { transform: translate(-50%, 24px); opacity: 1; }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .shake-error { animation: shake 0.4s ease-in-out; }
+        
+        /* --- 橫向滾動隱藏滾動條 --- */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+    
+<script type="text/babel">
+const { useState, useEffect, useRef, useMemo, useCallback } = React;
+
+// --- Icon Component ---
+const Icon = ({ name, size = 20, className = "" }) => {
+    const iconRef = useRef(null);
+    useEffect(() => {
+        if (typeof window.lucide !== 'undefined' && iconRef.current) {
+            window.lucide.createIcons({ 
+                root: iconRef.current, 
+                attrs: { "stroke-width": 2, class: className },
+                name: name,
+                nameAttr: 'data-lucide'
+            });
+        }
+    }, [name, className]);
+    return <span ref={iconRef} key={name} className="inline-flex items-center justify-center"><i data-lucide={name} style={{ width: size, height: size }}></i></span>;
+};
+
+// --- Toast Component ---
+const Toast = ({ message, type = 'error', onClose }) => {
+    useEffect(() => {
+        const timer = setTimeout(onClose, 3000);
+        return () => clearTimeout(timer);
+    }, [onClose]);
+    const bgColor = type === 'error' ? 'bg-red-500' : 'bg-green-500';
+    const iconName = type === 'error' ? 'alert-circle' : 'check-circle';
+    return (
+        <div className={`fixed top-0 left-1/2 z-[200] flex items-center gap-3 px-6 py-4 rounded-full shadow-xl text-white font-bold text-sm tracking-wide toast-enter ${bgColor} backdrop-blur-md`}>
+            <Icon name={iconName} size={20} className="text-white" />
+            <span>{message}</span>
+        </div>
+    );
+};
+
+// --- Terms Modal Component ---
+const TermsModal = ({ isOpen, onClose, title, children, onAgree }) => {
+    const contentRef = useRef(null);
+    const [canAgree, setCanAgree] = useState(false);
+
+    useEffect(() => {
+        if (isOpen) {
+            setCanAgree(false);
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => { document.body.style.overflow = ''; };
+    }, [isOpen]);
+
+    const handleScroll = (e) => {
+        const { scrollTop, scrollHeight, clientHeight } = e.target;
+        if (scrollHeight - scrollTop - clientHeight < 50) {
+            setCanAgree(true);
+        }
+    };
+
+    useEffect(() => {
+        if (isOpen) {
+            setCanAgree(false);
+            const timer = setTimeout(() => {
+                if (contentRef.current) {
+                    if (contentRef.current.scrollHeight <= contentRef.current.clientHeight + 1) {
+                        setCanAgree(true);
+                    }
+                }
+            }, 500);
+            return () => clearTimeout(timer);
+        }
+    }, [isOpen]);
+
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 z-[150] bg-white/95 flex flex-col animate-in slide-in-from-bottom-full duration-300 backdrop-blur-sm">
+            <div className="px-5 py-4 border-b border-gray-100 bg-white/90 backdrop-blur-sm flex justify-between items-center shrink-0">
+                <h3 className="text-lg font-black text-primary font-serif">{title}</h3>
+                <button type="button" onClick={onClose} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
+                    <Icon name="x" size={20} className="text-gray-500" />
+                </button>
+            </div>
+
+            <div 
+                ref={contentRef}
+                onScroll={handleScroll}
+                className="flex-1 overflow-y-auto p-6 text-sm leading-relaxed text-primary space-y-4"
+            >
+                {children}
+                <div className="h-10"></div>
+            </div>
+
+            <div className="p-5 border-t border-gray-100 bg-white shrink-0 shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
+                {!canAgree && (
+                    <div className="text-center text-xs font-bold text-red-500 mb-3 animate-pulse">
+                        👇 請滑動至最底部以同意條款
+                    </div>
+                )}
+                <button 
+                    onClick={() => {
+                        if(canAgree) {
+                            if (onAgree) onAgree();
+                            onClose();
+                        }
+                    }}
+                    type="button"
+                    disabled={!canAgree}
+                    className={`w-full py-4 rounded-xl font-bold text-base flex items-center justify-center gap-2 transition-all ${
+                        canAgree 
+                            ? 'bg-roseGold text-white shadow-lg shadow-roseGold/30 hover:bg-roseGold-dark' 
+                            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    }`}
+                >
+                    <Icon name="check-circle" size={20} />
+                    本人已詳閱並同意以上契約內容
+                </button>
+            </div>
+        </div>
+    );
+};
+
+// --- Main App Component ---
+const App = () => {
+    // State Management
+    const [view, setView] = useState('entry'); // entry, form
+    const [isBoarding, setIsBoarding] = useState(false);
+    const [showFullSig, setShowFullSig] = useState(false);
+    const [realtimeSig, setRealtimeSig] = useState(null);
+    const [activeModal, setActiveModal] = useState(null);
+    const [termsRead, setTermsRead] = useState({ grooming: false, boarding: false });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [toast, setToast] = useState(null);
+    const [errors, setErrors] = useState({});
+    
+    // 折疊狀態
+    const [catRoomsOpen, setCatRoomsOpen] = useState(false);
+    const [dogRoomsOpen, setDogRoomsOpen] = useState(false);
+    const [featuresOpen, setFeaturesOpen] = useState(false);
+
+    // Form Data State
+    const [formData, setFormData] = useState({
+        email: '', owner_name: '', owner_id: '', phone: '', address: '', 
+        emergency_name: '', emergency_phone: '',
+        pet_name: '', breed: '', sex: '', age: '', age_months: '', is_under_one: false, weight: '', fix: '',
+        chip_status: '', chip_id: '', preferred_clinic: '',
+        grooming_temperament: '',
+        dog_traits: [], is_barking: '', barking_detail: '',
+        medical_status: '', medical_history: [], medical_history_other: '',
+        checkin_date: '', checkout_date: '', stay_exp: '',
+        crate_status: [], food_aggr: '', pad_toilet: '',
+        vaccine: '', deworm: '', deworm_brand: '', vaccine_file: null,
+        allergy: '', personality: '', special_notes: '', boarding_notice_agree: false,
+        service_type: '', service_type_other: '', 
+        pickup_time: '',
+        legal_agree: false
+    });
+
+    const fullSigCanvasRef = useRef(null);
+    const padInstance = useRef(null);
+
+    // Helper Functions
+    const showToast = (message, type = 'error') => setToast({ message, type });
+    
+    const handleChange = (field, value) => {
+        let finalVal = value;
+        if (field === 'email') finalVal = value.toLowerCase();
+        if (field === 'owner_id') finalVal = value.toUpperCase();
+        setFormData(prev => ({ ...prev, [field]: finalVal }));
+        if (errors[field]) setErrors(prev => ({ ...prev, [field]: null }));
+    };
+
+    const toggleArrayField = (field, value) => {
+        setFormData(prev => {
+            const currentArr = Array.isArray(prev[field]) ? prev[field] : [];
+            let updatedArr = currentArr.includes(value) ? currentArr.filter(i => i !== value) : [...currentArr, value];
+            if (updatedArr.length > 0 && errors[field]) setErrors(prev => ({ ...prev, [field]: null }));
+            return { ...prev, [field]: updatedArr };
+        });
+    };
+
+    const pillBtn = (field, val, active, colorClass) => (
+        <button type="button" onClick={() => handleChange(field, val)} 
+            className={`pill-button flex-1 py-3.5 rounded-xl font-bold text-sm border-2 transition-all duration-300 transform ${active ? `bg-${colorClass} text-primary border-transparent shadow-lg scale-[1.02]` : 'bg-white text-primary border-gray-200 hover:border-gray-400 hover:scale-[1.01]'}`}>
+            <span className="flex items-center justify-center gap-1.5">
+                {active && <Icon name="check-circle" size={14} />}
+                {val}
+            </span>
+        </button>
+    );
+
+    // Validation Logic (Simplified for preview)
+    const handleSubmit = async () => {
+        setIsSubmitting(true);
+        showToast("正在提交資料...", "success");
+        setTimeout(() => {
+            setIsSubmitting(false);
+            showToast("✅ 提交成功！(預覽版)", "success");
+            setView('entry');
+        }, 2000);
+    };
+
+    // Signature Pad Logic
+    useEffect(() => {
+        let timer;
+        if (showFullSig && fullSigCanvasRef.current) {
+            document.body.style.overflow = 'hidden';
+            timer = setTimeout(() => {
+                const canvas = fullSigCanvasRef.current;
+                const container = canvas.parentElement;
+                const rect = container.getBoundingClientRect();
+                canvas.width = rect.width;
+                canvas.height = rect.height;
+                
+                if (padInstance.current) padInstance.current.off();
+                
+                padInstance.current = new window.SignaturePad(canvas, { 
+                    penColor: "rgb(51, 65, 85)",
+                    backgroundColor: "rgb(255, 255, 255)", 
+                    minWidth: 1.5,
+                    maxWidth: 3.0,
+                });
+            }, 100);
+        }
+        return () => { 
+            if (timer) clearTimeout(timer);
+            if (padInstance.current) padInstance.current.off(); 
+            document.body.style.overflow = '';
+        };
+    }, [showFullSig]);
+
+    // Render Entry View
+    if (view === 'entry') {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-bg relative overflow-hidden">
+                {/* 極簡背景光暈 */}
+                <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+                    <div className="absolute top-[-10%] right-[-10%] w-[400px] h-[400px] bg-roseGold-light/10 rounded-full blur-[100px]"></div>
+                    <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-roseGold/10 rounded-full blur-[100px]"></div>
+                </div>
+
+                {/* Logo 區域 */}
+                <div className="w-32 h-32 mx-auto mb-8 relative animate-float">
+                    <div className="w-full h-full bg-white rounded-full shadow-soft flex items-center justify-center overflow-hidden relative z-10 border border-gray-100">
+                        <img src="logo.png" alt="Logo" className="w-full h-full object-cover" />
+                    </div>
+                </div>
+                
+                {/* --- 優化後的高級感標題區域 --- */}
+                <div className="text-center space-y-2 mb-12">
+                    <h1 className="text-5xl md:text-6xl font-display font-semibold text-primary mb-1 tracking-wide leading-tight">
+                        Dream 17
+                    </h1>
+                    
+                    <div className="flex items-center justify-center gap-2 mb-3">
+                        <div className="h-[1px] w-8 bg-gold/40"></div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-gold"></div>
+                        <div className="h-[1px] w-8 bg-gold/40"></div>
+                    </div>
+
+                    <p className="text-gold font-elegant text-base md:text-lg font-light tracking-[0.4em] uppercase">
+                        精品寵物美容旅館
+                    </p>
+                </div>
+
+                {/* 按鈕區域 - 玫瑰金漸層長方形卡片 (尺寸縮小版) */}
+                <div className="grid md:grid-cols-2 gap-5 w-full max-w-2xl relative z-10">
+                    {/* 美容按鈕 - 玫瑰金系 */}
+                    <button onClick={() => { setView('form'); setIsBoarding(false); }} className="hero-btn-card pink">
+                        <div className="gradient-bg"></div>
+                        <div className="shimmer-layer"></div>
+                        <div className="icon-wrapper">
+                            <Icon name="scissors" size={28} /> {/* 縮小圖標：原本 32 -> 28 */}
+                        </div>
+                        <div className="hero-content">
+                            <h3 className="text-xl font-black tracking-tight mb-1">美容服務</h3> {/* 縮小標題字體：原本 2xl -> xl */}
+                            <p className="text-[10px] font-medium tracking-widest uppercase opacity-80 mb-1">Grooming Service</p> {/* 縮小副標字體 */}
+                            <p className="text-xs font-medium">專業美容師 • 精緻洗護</p> {/* 縮小描述字體 */}
+                        </div>
+                    </button>
+                    
+                    {/* 住宿按鈕 - 玫瑰金深色系 */}
+                    <button onClick={() => { setView('form'); setIsBoarding(true); }} className="hero-btn-card blue">
+                        <div className="gradient-bg"></div>
+                        <div className="shimmer-layer"></div>
+                        <div className="icon-wrapper">
+                            <Icon name="home" size={28} />
+                        </div>
+                        <div className="hero-content">
+                            <h3 className="text-xl font-black tracking-tight mb-1">住宿服務</h3>
+                            <p className="text-[10px] font-medium tracking-widest uppercase opacity-80 mb-1">Boarding Service</p>
+                            <p className="text-xs font-medium">24H監控 • 舒適空間</p>
+                        </div>
+                    </button>
+                </div>
+
+                {/* --- 聯絡資訊區塊 --- */}
+                <div className="mt-16 w-full max-w-md relative z-10 space-y-6">
+                    <div className="text-center space-y-2">
+                        <h3 className="text-lg font-bold text-primary">聯絡我們</h3>
+                        <div className="h-1 w-12 bg-pink mx-auto rounded-full"></div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-4">
+                        {/* FB */}
+                        <a href="https://www.facebook.com/p/%E5%A4%A217%E7%B2%BE%E5%93%81%E5%AF%B5%E7%89%A9%E7%BE%8E%E5%AE%B9%E6%97%85%E9%A4%A8-Dream17-Pet-Shop-100082362800996/" target="_blank" rel="noopener noreferrer" 
+                           className="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-gray-100 hover:border-pink hover:bg-pink/5 transition-all group">
+                            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-2 group-hover:scale-110 transition-transform">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                            </div>
+                            <span className="text-xs font-bold text-gray-500 group-hover:text-blue-600">Facebook</span>
+                        </a>
+
+                        {/* IG */}
+                        <a href="https://www.instagram.com/dream17_pet_shop_hotel?fbclid=IwY2xjawPbQXlleHRuA2FlbQIxMABicmlkETF3a0x6SDhIMVh3RlRIS29Vc3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHnW0xvqstiLsmI9W0aUAIFQRwjF3QllZj0Vr8564YJGrtKTTwsCwLFWp2Dsz_aem_XDbS8efUVsucjatveLzX4w" target="_blank" rel="noopener noreferrer" 
+                           className="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-gray-100 hover:border-pink hover:bg-pink/5 transition-all group">
+                            <div className="w-10 h-10 rounded-full bg-pink-50 flex items-center justify-center text-pink-600 mb-2 group-hover:scale-110 transition-transform">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                            </div>
+                            <span className="text-xs font-bold text-gray-500 group-hover:text-pink-600">Instagram</span>
+                        </a>
+
+                        {/* LINE */}
+                        <a href="https://lin.ee/Xvtvuhs" target="_blank" rel="noopener noreferrer" 
+                           className="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-gray-100 hover:border-green-500 hover:bg-green-50/50 transition-all group">
+                            <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-green-600 mb-2 group-hover:scale-110 transition-transform">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                            </div>
+                            <span className="text-xs font-bold text-gray-500 group-hover:text-green-600">LINE</span>
+                        </a>
+                    </div>
+
+                    <div className="text-center text-xs text-gray-500 space-y-2 pt-2 leading-relaxed">
+                        <p>🏠 地址：桃園市中壢區公園路二段250號</p>
+                        <p>☎️ 電話：03-2875350</p>
+                        <p>⏰ 營業時間：10:00-19:00</p>
+                        <p>🪧 特寵業字第C1110588號</p>
+                    </div>
+                </div>
+
+                <footer className="mt-12 text-center relative z-10">
+                    <p className="text-[10px] text-gray-400 font-medium tracking-wider">夢17精品寵物美容旅館</p>
+                </footer>
+            </div>
+        );
+    }
+
+    // Render Form View
+    return (
+        <div className="min-h-screen pb-32 bg-bg">
+            {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+
+            <nav className="fixed top-0 w-full z-40 bg-white/80 backdrop-blur-xl border-b border-gray-100 shadow-sm">
+                <div className="px-6 py-4 flex justify-between items-center max-w-4xl mx-auto">
+                    <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setView('entry')}>
+                        <div className="w-8 h-8 rounded-full bg-roseGold flex items-center justify-center text-white group-hover:rotate-12 transition-transform overflow-hidden">
+                            <img src="logo.png" alt="Logo" className="w-full h-full object-cover" />
+                        </div>
+                        <div className="font-black text-lg text-primary tracking-tight font-serif">夢17</div>
+                    </div>
+                    <button 
+                        onClick={() => setView('entry')} 
+                        className="text-xs font-bold text-primary hover:text-secondary px-4 py-2 border border-gray-200 rounded-full transition-all flex items-center gap-2"
+                    >
+                        <Icon name="arrow-left" size={14}/> 返回
+                    </button>
+                </div>
+            </nav>
+
+            <main className="pt-28 px-4 max-w-4xl mx-auto space-y-8 pb-20">
+                {/* === 如果是住宿服務，先顯示房型介紹與亮點 (折疊版) === */}
+                {isBoarding && (
+                    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        
+                        {/* 折疊區塊：貓咪住宿區 */}
+                        <div className="clean-card overflow-hidden">
+                            <button 
+                                onClick={() => setCatRoomsOpen(!catRoomsOpen)}
+                                className="w-full px-6 py-5 flex items-center justify-between bg-white hover:bg-gray-50 transition-colors"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <span className="w-8 h-8 rounded-full bg-pink/20 flex items-center justify-center text-pinkDark shrink-0">
+                                        <Icon name="cat" size={16} />
+                                    </span>
+                                    <div className="text-left">
+                                        <h3 className="text-lg font-bold text-primary">貓咪住宿區</h3>
+                                        <p className="text-xs text-secondary">點擊查看房型與價格</p>
+                                    </div>
+                                </div>
+                                <Icon 
+                                    name="chevron-down" 
+                                    size={20} 
+                                    className={`text-gray-400 transition-transform duration-300 ${catRoomsOpen ? 'rotate-180' : ''}`} 
+                                />
+                            </button>
+                            
+                            {catRoomsOpen && (
+                                <div className="p-4 border-t border-gray-100 animate-in slide-in-from-top-2 duration-300">
+                                    <div className="flex overflow-x-auto gap-4 pb-4 hide-scrollbar snap-x snap-mandatory">
+                                        {[
+                                            { name: '標準房', size: '150×88×189 cm', price: '$500/晚', desc: '簡約乾淨' },
+                                            { name: '經典房', size: '273×87×189 cm', price: '$600/晚', desc: '跳台玩具' },
+                                            { name: '景觀房', size: '99×178×189 cm', price: '$700/晚', desc: '自然採光' },
+                                            { name: '景觀豪華房', size: '221×178×189 cm', price: '$800/晚', desc: '挑高設計' }
+                                        ].map((room, idx) => (
+                                            <div key={idx} className="room-card p-4 snap-center shrink-0">
+                                                <div className="flex justify-between items-start mb-2">
+                                                    <h4 className="font-bold text-primary">{room.name}</h4>
+                                                    <span className="text-sm font-bold text-pinkDark">{room.price}</span>
+                                                </div>
+                                                <p className="text-[10px] text-gray-400 mb-2">{room.size}</p>
+                                                <p className="text-xs text-secondary leading-relaxed">{room.desc}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* 折疊區塊：狗狗住宿區 */}
+                        <div className="clean-card overflow-hidden">
+                            <button 
+                                onClick={() => setDogRoomsOpen(!dogRoomsOpen)}
+                                className="w-full px-6 py-5 flex items-center justify-between bg-white hover:bg-gray-50 transition-colors"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <span className="w-8 h-8 rounded-full bg-blue/20 flex items-center justify-center text-blueDark shrink-0">
+                                        <Icon name="dog" size={16} />
+                                    </span>
+                                    <div className="text-left">
+                                        <h3 className="text-lg font-bold text-primary">狗狗住宿區</h3>
+                                        <p className="text-xs text-secondary">點擊查看房型與價格</p>
+                                    </div>
+                                </div>
+                                <Icon 
+                                    name="chevron-down" 
+                                    size={20} 
+                                    className={`text-gray-400 transition-transform duration-300 ${dogRoomsOpen ? 'rotate-180' : ''}`} 
+                                />
+                            </button>
+                            
+                            {dogRoomsOpen && (
+                                <div className="p-4 border-t border-gray-100 animate-in slide-in-from-top-2 duration-300">
+                                    <div className="flex overflow-x-auto gap-4 pb-4 hide-scrollbar snap-x snap-mandatory">
+                                        {[
+                                            { name: '標準房', size: '120×150×121 cm', price: '$600/晚', desc: '小型犬適用' },
+                                            { name: '經典房', size: '170×150×121 cm', price: '$700/晚', desc: '自在翻身' },
+                                            { name: '豪華房', size: '175×150×121 cm', price: '$800/晚', desc: '寬敞不擁擠' },
+                                            { name: '夢17經典房', size: '175×200×252 cm', price: '$1200/晚', desc: '高挑大空間' }
+                                        ].map((room, idx) => (
+                                            <div key={idx} className="room-card p-4 snap-center shrink-0">
+                                                <div className="flex justify-between items-start mb-2">
+                                                    <h4 className="font-bold text-primary">{room.name}</h4>
+                                                    <span className="text-sm font-bold text-blueDark">{room.price}</span>
+                                                </div>
+                                                <p className="text-[10px] text-gray-400 mb-2">{room.size}</p>
+                                                <p className="text-xs text-secondary leading-relaxed">{room.desc}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* 折疊區塊：品牌亮點 */}
+                        <div className="clean-card overflow-hidden">
+                            <button 
+                                onClick={() => setFeaturesOpen(!featuresOpen)}
+                                className="w-full px-6 py-5 flex items-center justify-between bg-white hover:bg-gray-50 transition-colors"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <span className="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center text-gold shrink-0">
+                                        <Icon name="star" size={16} />
+                                    </span>
+                                    <div className="text-left">
+                                        <h3 className="text-lg font-bold text-primary">為什麼選擇夢17？</h3>
+                                        <p className="text-xs text-secondary">點擊查看三大特色</p>
+                                    </div>
+                                </div>
+                                <Icon 
+                                    name="chevron-down" 
+                                    size={20} 
+                                    className={`text-gray-400 transition-transform duration-300 ${featuresOpen ? 'rotate-180' : ''}`} 
+                                />
+                            </button>
+                            
+                            {featuresOpen && (
+                                <div className="p-4 border-t border-gray-100 animate-in slide-in-from-top-2 duration-300">
+                                    <div className="flex overflow-x-auto gap-4 pb-4 hide-scrollbar snap-x snap-mandatory px-2">
+                                        <div className="feature-card snap-center shrink-0">
+                                            <div className="feature-icon" style={{background: 'linear-gradient(135deg, #FFD1DC 0%, #FFB7B2 100%)'}}>
+                                                <Icon name="clock" size={24} />
+                                            </div>
+                                            <h4 className="font-bold text-primary text-sm mb-1">24H監控</h4>
+                                            <p className="text-[10px] text-secondary leading-tight">全天候監控系統，讓您隨時查看毛孩狀態，安心又放心。</p>
+                                        </div>
+                                        <div className="feature-card snap-center shrink-0">
+                                            <div className="feature-icon" style={{background: 'linear-gradient(135deg, #AEC6CF 0%, #9BB8CC 100%)'}}>
+                                                <Icon name="maximize" size={24} />
+                                            </div>
+                                            <h4 className="font-bold text-primary text-sm mb-1">超大空間</h4>
+                                            <p className="text-[10px] text-secondary leading-tight">青埔最大室內寵物住宿，不關籠設計，毛孩可以自由活動。</p>
+                                        </div>
+                                        <div className="feature-card snap-center shrink-0">
+                                            <div className="feature-icon" style={{background: 'linear-gradient(135deg, #FFD1DC 0%, #FFB7B2 100%)'}}>
+                                                <Icon name="heart" size={24} />
+                                            </div>
+                                            <h4 className="font-bold text-primary text-sm mb-1">專業照護</h4>
+                                            <p className="text-[10px] text-secondary leading-tight">專業美容師團隊，提供洗澡、美容、SPA按摩等全方位服務。</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                    </div>
+                )}
+
+                {/* === 表單標題 === */}
+                <div className="text-center space-y-2 mb-8">
+                    <h2 className="text-3xl font-black text-primary tracking-tight font-serif">
+                        {isBoarding ? "住宿與美容服務契約" : "美容服務契約"}
+                    </h2>
+                    <p className="text-sm text-secondary font-medium max-w-md mx-auto">
+                        永遠以毛小孩為出發點著想，無微不至的照顧是我們對毛小孩愛的回饋。
+                    </p>
+                </div>
+
+                {/* 1. 飼主資料 */}
+                <section className="clean-card p-8 md:p-10 space-y-6">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 rounded-full bg-pink/20 flex items-center justify-center text-pinkDark">
+                            <Icon name="user" size={20}/>
+                        </div>
+                        <h3 className="text-xl font-bold text-primary font-serif">飼主基本資料</h3>
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-secondary ml-1">飼主姓名</label>
+                            <input 
+                                className="soft-input" 
+                                placeholder="請輸入姓名"
+                                value={formData.owner_name}
+                                onChange={e=>handleChange('owner_name', e.target.value)}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-secondary ml-1">連絡電話</label>
+                            <input 
+                                className="soft-input" 
+                                placeholder="0912345678"
+                                value={formData.phone}
+                                onChange={e=>handleChange('phone', e.target.value)}
+                            />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                            <label className="text-xs font-bold text-secondary ml-1">電子郵件 (寄送契約副本)</label>
+                            <input 
+                                className="soft-input" 
+                                placeholder="example@email.com"
+                                type="email"
+                                value={formData.email}
+                                onChange={e=>handleChange('email', e.target.value)}
+                            />
+                        </div>
+                    </div>
+                </section>
+
+                {/* 2. 寵物資料 */}
+                <section className="clean-card p-8 md:p-10 space-y-6">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 rounded-full bg-blue/20 flex items-center justify-center text-blueDark">
+                            <Icon name="paw-print" size={20}/>
+                        </div>
+                        <h3 className="text-xl font-bold text-primary font-serif">毛孩資料</h3>
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-secondary ml-1">寵物名字</label>
+                            <input 
+                                className="soft-input" 
+                                placeholder="例如：旺財"
+                                value={formData.pet_name}
+                                onChange={e=>handleChange('pet_name', e.target.value)}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-secondary ml-1">品種</label>
+                            <input 
+                                className="soft-input" 
+                                placeholder="例如：黃金獵犬"
+                                value={formData.breed}
+                                onChange={e=>handleChange('breed', e.target.value)}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-secondary ml-1">性別</label>
+                            <div className="flex gap-2">
+                                {pillBtn('sex', '公', formData.sex==='公', 'pink')}
+                                {pillBtn('sex', '母', formData.sex==='母', 'pink')}
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-secondary ml-1">結紮</label>
+                            <div className="flex gap-2">
+                                {pillBtn('fix', '是', formData.fix==='是', 'blue')}
+                                {pillBtn('fix', '否', formData.fix==='否', 'blue')}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* 3. 服務條款與簽署 */}
+                <section className="clean-card p-8 md:p-10 space-y-6">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center text-gold">
+                            <Icon name="file-text" size={20}/>
+                        </div>
+                        <h3 className="text-xl font-bold text-primary font-serif">服務條款與簽署</h3>
+                    </div>
+                    
+                    <div className="space-y-4">
+                        <button 
+                            type="button"
+                            onClick={() => setActiveModal(isBoarding ? 'boarding' : 'grooming')}
+                            className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all ${termsRead[isBoarding ? 'boarding' : 'grooming'] ? 'bg-pink border-pink text-primary' : 'bg-white border-gray-200 hover:border-gray-400'}`}
+                        >
+                            <span className="font-bold text-sm">
+                                {isBoarding ? '詳閱住宿服務契約條款' : '詳閱美容服務契約條款'}
+                            </span>
+                            <Icon name={termsRead[isBoarding ? 'boarding' : 'grooming'] ? "check-circle" : "chevron-right"} size={20} />
+                        </button>
+                    </div>
+
+                    <div className="space-y-4 pt-4 border-t border-gray-100">
+                        <label className="text-sm font-bold text-primary flex items-center gap-2">
+                            <Icon name="pen-tool" size={18}/> 數位簽名
+                        </label>
+                        
+                        {realtimeSig ? (
+                            <div className="bg-white rounded-2xl border-2 border-pink p-4 flex justify-center items-center min-h-[150px]">
+                                <img src={realtimeSig} alt="簽名" className="max-h-[120px] object-contain" />
+                            </div>
+                        ) : (
+                            <button 
+                                type="button" 
+                                onClick={() => setShowFullSig(true)} 
+                                className="w-full min-h-[150px] rounded-2xl border-2 border-dashed border-gray-300 bg-white flex flex-col items-center justify-center gap-2 text-gray-400 hover:border-pink hover:text-pink transition-all"
+                            >
+                                <Icon name="pen-tool" size={32} />
+                                <span className="text-sm font-bold">點擊此處開始簽名</span>
+                            </button>
+                        )}
+                    </div>
+                </section>
+
+                {/* Submit Button - 根據服務類型變色 */}
+                <div className="pt-4">
+                    <button 
+                        type="button" 
+                        onClick={handleSubmit} 
+                        disabled={isSubmitting}
+                        className={`w-full py-4 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl hover:scale-[1.01] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${isBoarding ? 'bg-blue text-white hover:bg-blueDark' : 'bg-pink text-white hover:bg-pinkDark'}`}
+                    >
+                        {isSubmitting ? <Icon name="loader-2" size={20} className="animate-spin"/> : <Icon name="send" size={20}/>}
+                        {isSubmitting ? '提交中...' : '確認並提交數位契約'}
+                    </button>
+                </div>
+            </main>
+
+            {/* Modals */}
+            <TermsModal 
+                isOpen={activeModal === 'grooming'} 
+                onClose={() => setActiveModal(null)} 
+                title="美容服務契約條款"
+                onAgree={() => setTermsRead(prev => ({...prev, grooming: true}))}
+            >
+                <div className="space-y-4">
+                    <p>這裡放置美容服務的詳細條款內容...</p>
+                    <p>（預覽版僅展示結構）</p>
+                    <p>飼主應詳盡且誠實申報寵物健康狀況及特殊需求...</p>
+                    <p>收費以毛孩體重、體型、毛量、毛質為評估標準...</p>
+                    <p>恕不接待：未滿3個月、未打完三劑疫苗幼犬貓...</p>
+                </div>
+            </TermsModal>
+
+            <TermsModal 
+                isOpen={activeModal === 'boarding'} 
+                onClose={() => setActiveModal(null)} 
+                title="住宿服務契約條款"
+                onAgree={() => setTermsRead(prev => ({...prev, boarding: true}))}
+            >
+                <div className="space-y-4">
+                    <p>這裡放置住宿服務的詳細條款內容...</p>
+                    <p>（預覽版僅展示結構）</p>
+                    <p>入住請提供有效疫苗接種證明文件...</p>
+                    <p>提供獨立房間及戶外草皮（雨天改室內）...</p>
+                    <p>非24小時照護聲明：本人已知悉且同意...</p>
+                </div>
+            </TermsModal>
+
+            {/* Fullscreen Signature Pad */}
+            {showFullSig && (
+                <div className="fixed inset-0 z-[200] bg-white flex flex-col">
+                    <div className="flex items-center justify-between p-4 border-b border-gray-100">
+                        <h3 className="font-bold text-lg text-primary font-serif">請在下方簽名</h3>
+                        <button type="button" onClick={() => setShowFullSig(false)} className="p-2 hover:bg-gray-100 rounded-full">
+                            <Icon name="x" size={24}/>
+                        </button>
+                    </div>
+                    <div className="flex-1 p-4 bg-gray-50">
+                        <div className="canvas-container w-full h-full bg-white rounded-2xl shadow-inner">
+                            <canvas ref={fullSigCanvasRef} className="w-full h-full"></canvas>
+                        </div>
+                    </div>
+                    <div className="p-4 border-t border-gray-100 flex gap-3">
+                        <button 
+                            type="button"
+                            onClick={() => {
+                                if (padInstance.current) padInstance.current.clear();
+                            }}
+                            className="flex-1 py-3 bg-gray-200 text-primary rounded-xl font-bold"
+                        >
+                            清除重簽
+                        </button>
+                        <button 
+                            type="button"
+                            onClick={() => {
+                                if (padInstance.current && !padInstance.current.isEmpty()) {
+                                    setRealtimeSig(padInstance.current.toDataURL('image/jpeg', 0.8));
+                                    setShowFullSig(false);
+                                }
+                            }}
+                            className="flex-[2] py-3 bg-pink text-white rounded-xl font-bold shadow-lg"
+                        >
+                            確認簽名
+                        </button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
