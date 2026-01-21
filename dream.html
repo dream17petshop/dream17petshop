@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <title>夢17精品寵物美容旅館 | Dream 17</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dream: {
+                            navy: '#003B6D',    /* 招牌深藍 */
+                            gold: '#C5A065',    /* 香檳金 */
+                            goldLight: '#E8DCC5',
+                            cream: '#FDFBF7',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif']
+                    },
+                    backgroundImage: {
+                        'marble': "url('https://www.transparenttextures.com/patterns/white-marble.png')",
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 1s ease-out forwards',
+                        'slide-up': 'slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { transform: 'translateY(40px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+        
+        body { 
+            background-color: #FDFBF7; 
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+
+        /* 城堡拱門遮罩 */
+        .castle-arch {
+            border-radius: 0 0 50% 50% / 0 0 15% 15%;
+        }
+        @media (min-width: 768px) {
+            .castle-arch {
+                border-radius: 0 0 0 0; 
+                clip-path: ellipse(150% 100% at 0% 50%); 
+            }
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // --- 內嵌 SVG 圖示 ---
+        const Icons = {
+            Scissors: () => <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>,
+            
+            // 修改：換成「舒適床鋪」圖示，符合精品旅館形象，不再用奇怪的狗屋
+            Bed: () => <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg>,
+            
+            Phone: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>,
+            MapPin: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>,
+            ArrowRight: () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        };
+
+        const App = () => {
+            
+            // 主圖檔名
+            const heroImage = 'line_oa_chat_260122_020220_group_1.jpg';
+
+            return (
+                <div className="min-h-screen w-full flex flex-col md:flex-row bg-dream-cream bg-marble overflow-hidden relative">
+                    
+                    {/* --- 左側 (電腦版) / 上方 (手機版)：城堡視覺區 --- */}
+                    <div className="w-full md:w-[55%] h-[40vh] md:h-screen relative castle-arch overflow-hidden shadow-2xl z-10 bg-dream-navy">
+                        <div className="absolute inset-0">
+                            <img 
+                                src={heroImage} 
+                                className="w-full h-full object-cover opacity-90 scale-105 animate-[float_10s_ease-in-out_infinite]" 
+                                alt="Dream 17 Castle Environment" 
+                            />
+                        </div>
+                        <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-dream-navy/90 via-dream-navy/20 to-transparent"></div>
+                        <div className="absolute top-6 left-6 right-6 bottom-6 border border-white/20 rounded-[inherit] pointer-events-none"></div>
+
+                        <div className="absolute bottom-10 left-10 md:bottom-20 md:left-20 text-white hidden md:block animate-slide-up">
+                            <div className="flex items-center gap-2 mb-4">
+                                <div className="h-[1px] w-10 bg-dream-gold"></div>
+                                <span className="text-dream-gold font-bold tracking-widest text-sm uppercase">Luxury Pet Hotel</span>
+                            </div>
+                            <h2 className="text-5xl lg:text-6xl font-serif font-bold leading-tight drop-shadow-lg">
+                                給毛孩最極致的<br/>
+                                <span className="text-dream-gold italic">城堡禮遇</span>
+                            </h2>
+                        </div>
+                    </div>
+
+                    {/* --- 右側 (電腦版) / 下方 (手機版)：操作互動區 --- */}
+                    <div className="w-full md:w-[45%] flex flex-col justify-center items-center relative z-20 -mt-16 md:mt-0">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-dream-gold/10 rounded-full blur-[80px] pointer-events-none"></div>
+
+                        <div className="w-full max-w-md px-6 pb-12 md:px-12 md:py-0 space-y-8 animate-slide-up" style={{animationDelay: '0.2s'}}>
+                            
+                            {/* Logo 區塊 - 修改：去除所有背景框線，直接顯示去背圖 */}
+                            <div className="flex flex-col items-center md:items-start space-y-2">
+                                <div className="w-48 md:w-56 relative z-30 mb-2">
+                                    <img 
+                                        src="logo.png" 
+                                        className="w-full h-auto object-contain drop-shadow-md" 
+                                        alt="Dream 17 Logo" 
+                                    />
+                                </div>
+                                <div className="space-y-1 text-center md:text-left w-full pl-2">
+                                    <h1 className="text-2xl md:text-3xl font-serif font-bold text-dream-navy">夢17精品寵物美容旅館</h1>
+                                    <p className="text-dream-gold font-bold text-xs tracking-[0.3em] uppercase">Dream 17 • Forever Family</p>
+                                </div>
+                            </div>
+
+                            {/* 服務選擇卡片 */}
+                            <div className="grid gap-4">
+                                {/* 美容卡片 */}
+                                <button onClick={() => window.location.href='#grooming'} className="group relative w-full bg-white p-5 rounded-2xl border border-dream-goldLight shadow-sm hover:shadow-xl hover:border-dream-gold transition-all duration-300 flex items-center gap-5 text-left overflow-hidden">
+                                    <div className="absolute inset-0 bg-dream-navy/5 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out"></div>
+                                    <div className="w-14 h-14 rounded-full bg-dream-navy text-white flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:bg-dream-gold transition-all duration-300 relative z-10">
+                                        <Icons.Scissors />
+                                    </div>
+                                    <div className="flex-1 relative z-10">
+                                        <h3 className="text-lg font-bold text-dream-navy group-hover:text-dream-navy transition-colors">精緻美容</h3>
+                                        <p className="text-xs text-slate-500 mt-1 font-medium">頂級洗護 SPA · 專業造型修剪</p>
+                                    </div>
+                                    <div className="text-dream-goldLight group-hover:text-dream-gold relative z-10 transition-transform group-hover:translate-x-1">
+                                        <Icons.ArrowRight />
+                                    </div>
+                                </button>
+
+                                {/* 住宿卡片 - 修改：Icon 更新為 Bed (床鋪) */}
+                                <button onClick={() => window.location.href='#boarding'} className="group relative w-full bg-white p-5 rounded-2xl border border-dream-goldLight shadow-sm hover:shadow-xl hover:border-dream-gold transition-all duration-300 flex items-center gap-5 text-left overflow-hidden">
+                                    <div className="absolute inset-0 bg-dream-gold/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out"></div>
+                                    <div className="w-14 h-14 rounded-full bg-white border-2 border-dream-gold text-dream-navy flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:bg-dream-navy group-hover:text-white group-hover:border-dream-navy transition-all duration-300 relative z-10">
+                                        <Icons.Bed />
+                                    </div>
+                                    <div className="flex-1 relative z-10">
+                                        <h3 className="text-lg font-bold text-dream-navy group-hover:text-dream-navy transition-colors">精品住宿</h3>
+                                        <p className="text-xs text-slate-500 mt-1 font-medium">24H 舒適陪伴 · 不關籠自由空間</p>
+                                    </div>
+                                    <div className="text-dream-goldLight group-hover:text-dream-gold relative z-10 transition-transform group-hover:translate-x-1">
+                                        <Icons.ArrowRight />
+                                    </div>
+                                </button>
+                            </div>
+
+                            {/* 聯絡按鈕區 */}
+                            <div className="flex gap-4 pt-4 border-t border-dream-gold/20">
+                                <a href="tel:032875350" className="flex-1 py-4 bg-white border border-dream-goldLight text-dream-navy rounded-xl font-bold text-sm shadow-sm hover:bg-dream-navy hover:text-white hover:shadow-lg transition-all flex items-center justify-center gap-2 group">
+                                    <Icons.Phone /> 撥打電話
+                                </a>
+                                <a href="https://line.me/R/ti/p/your_line_id" className="flex-1 py-4 bg-white border border-dream-goldLight text-dream-navy rounded-xl font-bold text-sm shadow-sm hover:bg-dream-navy hover:text-white hover:shadow-lg transition-all flex items-center justify-center gap-2 group">
+                                    <img src="line.png" className="w-6 h-6 object-contain" alt="LINE" />
+                                    <span>加好友預約</span>
+                                </a>
+                            </div>
+
+                            {/* 地址 */}
+                            <div className="text-center md:text-left">
+                                <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-white/60 rounded-full border border-dream-goldLight/50 text-xs font-bold text-slate-500 backdrop-blur-sm">
+                                    <Icons.MapPin />
+                                    桃園市中壢區高鐵南路二段266號
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div className="absolute bottom-4 right-0 left-0 text-center md:text-right md:pr-8 z-30 pointer-events-none">
+                        <p className="text-[10px] text-slate-300 md:text-slate-400 font-medium">© 2026 Dream 17. Designed by Shiba Studio</p>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
