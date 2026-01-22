@@ -2,43 +2,58 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=no, viewport-fit=cover">
     <title>夢17精品寵物美容旅館 | Dream 17</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
 
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
                         dream: {
-                            navy: '#003B6D',    /* 招牌深藍 */
+                            navy: '#5C4D42',    /* 主色：重烘焙奶茶色 */
                             gold: '#C5A065',    /* 香檳金 */
-                            goldLight: '#E8DCC5',
-                            cream: '#FDFBF7',
+                            cream: '#FAF8F5',   /* 溫潤奶油色 */
+                            line: '#06C755',    /* LINE 綠 */
+                            red: '#E05D5D'      /* 警告紅 */
                         }
                     },
-                    fontFamily: {
-                        sans: ['"Noto Sans TC"', 'sans-serif'],
-                        serif: ['"Playfair Display"', 'serif']
-                    },
-                    backgroundImage: {
-                        'marble': "url('https://www.transparenttextures.com/patterns/white-marble.png')",
-                    },
                     animation: {
-                        'fade-in': 'fadeIn 1s ease-out forwards',
-                        'slide-up': 'slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards',
-                        'float': 'float 6s ease-in-out infinite',
+                        'blob': 'blob 12s infinite',
+                        'fade-up': 'fadeUp 0.8s ease-out forwards',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'slide-down': 'slideDown 0.3s ease-out forwards',
+                        'shake': 'shake 0.4s ease-in-out',
                     },
                     keyframes: {
-                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
-                        slideUp: { '0%': { transform: 'translateY(40px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
-                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } }
+                        blob: {
+                            '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+                            '33%': { transform: 'translate(40px, -60px) scale(1.1)' },
+                            '66%': { transform: 'translate(-30px, 30px) scale(0.9)' },
+                        },
+                        fadeUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        slideDown: {
+                            '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        shake: {
+                            '0%, 100%': { transform: 'translateX(0)' },
+                            '25%': { transform: 'translateX(-4px)' },
+                            '75%': { transform: 'translateX(4px)' }
+                        }
                     }
                 }
             }
@@ -46,157 +61,530 @@
     </script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
         
         body { 
-            background-color: #FDFBF7; 
+            background: #FAF8F5;
             font-family: 'Noto Sans TC', sans-serif;
+            color: #5C4D42;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* 城堡拱門遮罩 */
-        .castle-arch {
-            border-radius: 0 0 50% 50% / 0 0 15% 15%;
-        }
-        @media (min-width: 768px) {
-            .castle-arch {
-                border-radius: 0 0 0 0; 
-                clip-path: ellipse(150% 100% at 0% 50%); 
-            }
+        .glass-panel {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.3));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-top: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 32px rgba(92, 77, 66, 0.08);
         }
 
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .glass-button {
+            position: relative;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.6));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow: hidden;
+        }
+        .glass-button:hover {
+            transform: translateY(-3px);
+            border-color: rgba(197, 160, 101, 0.5);
+            box-shadow: 0 15px 30px -10px rgba(197, 160, 101, 0.25);
+        }
+
+        .glass-container {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 20px 50px rgba(92, 77, 66, 0.08);
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 20px rgba(92, 77, 66, 0.03);
+        }
+
+        .glass-input {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(200, 200, 200, 0.5);
+            transition: all 0.3s ease;
+        }
+        .glass-input:focus {
+            background: #fff;
+            border-color: #C5A065;
+            box-shadow: 0 0 0 3px rgba(197, 160, 101, 0.1);
+            outline: none;
+        }
+
+        .radio-card {
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 2px solid #E5E7EB;
+            background: #fff;
+        }
+        .radio-card:hover { border-color: #C5A065; }
+        .radio-card.active {
+            background: #5C4D42;
+            color: white;
+            border-color: #5C4D42;
+            box-shadow: 0 5px 15px rgba(92, 77, 66, 0.2);
+        }
+        .radio-card.active .sub-text { color: rgba(255,255,255,0.8); }
+        .radio-card.active .danger-text { color: #FFD1D1; }
+        
+        .radio-card.danger.active {
+            background: #E05D5D;
+            border-color: #E05D5D;
+            box-shadow: 0 5px 15px rgba(224, 93, 93, 0.2);
+        }
+
+        .shake { animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
+        .touch-none { touch-action: none; }
+        
+        .fullscreen-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+        }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState, useEffect, useRef, useMemo } = React;
 
-        // --- 內嵌 SVG 圖示 ---
         const Icons = {
-            Scissors: () => <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>,
-            
-            // 修改：換成「舒適床鋪」圖示，符合精品旅館形象，不再用奇怪的狗屋
-            Bed: () => <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg>,
-            
-            Phone: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>,
-            MapPin: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>,
-            ArrowRight: () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            Scissors: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>,
+            Home: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="2.5"/></svg>,
+            Phone: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>,
+            MapPin: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>,
+            Arrow: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14m-4-4l4 4-4 4"/></svg>,
+            ArrowLeft: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5m7 7l-7-7 7-7"/></svg>,
+            Check: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>,
+            Alert: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>,
+            Pen: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>,
+            Lock: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>,
+            Activity: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+        };
+
+        const InputGroup = ({ label, required = false, children, error }) => (
+            <div className="space-y-2">
+                <label className="text-sm font-bold text-dream-navy/80 ml-1">
+                    {label} {required && <span className="text-dream-red">*</span>}
+                </label>
+                {children}
+                {error && <p className="text-xs text-dream-red font-bold ml-1 animate-pulse">{error}</p>}
+            </div>
+        );
+
+        const TextInput = ({ value, onChange, placeholder, type="text" }) => (
+            <input type={type} value={value} onChange={onChange} placeholder={placeholder}
+                className="w-full h-12 px-4 rounded-xl glass-input text-dream-navy font-bold placeholder:text-gray-300"
+            />
+        );
+
+        const RadioButton = ({ label, subText, selected, onClick, danger = false }) => (
+            <div onClick={onClick}
+                className={`radio-card w-full p-4 rounded-xl border-2 text-left flex items-start gap-3 group
+                ${selected ? (danger ? 'active danger' : 'active') : 'border-gray-200 text-dream-navy hover:border-dream-gold'}`}>
+                <div className={`w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center mt-0.5
+                    ${selected ? 'border-white' : 'border-gray-300'}`}>
+                    {selected && <div className="w-2.5 h-2.5 rounded-full bg-white"></div>}
+                </div>
+                <div>
+                    <div className="font-bold text-sm leading-tight flex items-center gap-2">{label}</div>
+                    {subText && <div className={`sub-text text-xs mt-1 font-medium ${danger ? 'text-dream-red danger-text' : (selected ? 'text-white/90' : 'text-gray-400')}`}>{subText}</div>}
+                </div>
+            </div>
+        );
+
+        // --- 全螢幕簽名板 ---
+        const SignaturePadModal = ({ isOpen, onClose, onSave }) => {
+            const canvasRef = useRef(null);
+            const padRef = useRef(null);
+
+            useEffect(() => {
+                if (isOpen) {
+                    document.body.style.overflow = 'hidden';
+                    const initCanvas = () => {
+                        const canvas = canvasRef.current;
+                        if (canvas) {
+                            const container = canvas.parentElement;
+                            const rect = container.getBoundingClientRect();
+                            const displayWidth = rect.width;
+                            const displayHeight = rect.height;
+                            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                            canvas.width = displayWidth * ratio;
+                            canvas.height = displayHeight * ratio;
+                            canvas.style.width = displayWidth + 'px';
+                            canvas.style.height = displayHeight + 'px';
+                            const ctx = canvas.getContext("2d");
+                            ctx.scale(ratio, ratio);
+                            ctx.fillStyle = "rgb(255, 255, 255)";
+                            ctx.fillRect(0, 0, displayWidth, displayHeight);
+                            if (padRef.current) padRef.current.off();
+                            padRef.current = new SignaturePad(canvas, {
+                                minWidth: 2.0, maxWidth: 5.0, 
+                                penColor: '#5C4D42',
+                                backgroundColor: 'rgb(255, 255, 255)' 
+                            });
+                        }
+                    };
+                    setTimeout(initCanvas, 100);
+                } else {
+                    document.body.style.overflow = '';
+                }
+                return () => { document.body.style.overflow = ''; };
+            }, [isOpen]);
+
+            if (!isOpen) return null;
+
+            return (
+                <div className="fullscreen-modal animate-fade-in">
+                    <div className="p-4 bg-dream-navy text-white flex justify-between items-center shadow-md shrink-0 safe-top">
+                        <h3 className="font-bold text-lg flex items-center gap-2 tracking-wide"><Icons.Pen/> 請在此簽名</h3>
+                        <button onClick={onClose} className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors">✕</button>
+                    </div>
+                    <div className="flex-1 bg-gray-100 relative w-full overflow-hidden touch-none">
+                        <canvas ref={canvasRef} className="w-full h-full cursor-crosshair touch-none block" />
+                        <div className="absolute bottom-4 right-4 text-xs text-gray-400 pointer-events-none font-bold select-none">Dream 17 Signature</div>
+                    </div>
+                    <div className="p-5 bg-white border-t border-gray-100 flex gap-4 shrink-0 safe-bottom">
+                        <button onClick={() => {
+                            if(padRef.current) {
+                                padRef.current.clear();
+                                const canvas = canvasRef.current;
+                                const ctx = canvas.getContext('2d');
+                                ctx.fillStyle = "rgb(255, 255, 255)";
+                                ctx.fillRect(0, 0, canvas.width/window.devicePixelRatio, canvas.height/window.devicePixelRatio);
+                            }
+                        }} className="flex-1 py-4 rounded-xl bg-gray-100 text-gray-600 font-bold hover:bg-gray-200 transition-colors text-lg">清除重簽</button>
+                        <button onClick={() => {
+                            if (!padRef.current?.isEmpty()) {
+                                onSave(padRef.current.toDataURL("image/jpeg"));
+                                onClose();
+                            }
+                        }} className="flex-[2] py-4 rounded-xl bg-dream-navy text-white font-bold hover:bg-[#4A3D35] transition-colors shadow-lg text-lg">確認簽名</button>
+                    </div>
+                </div>
+            );
         };
 
         const App = () => {
+            const [view, setView] = useState('home');
+            const [scrolled, setScrolled] = useState(false);
+            const [formData, setFormData] = useState({
+                lineAdded: false, email: '', owner_name: '', phone: '', owner_id: '', address: '',
+                emergency_name: '', emergency_phone: '',
+                pet_name: '', breed: '', weight: '', age_type: 'adult', age: '', age_months: '',
+                pet_type: 'dog',
+                sex: '', fix: '', social_traits: [], temperament: '', chip_status: '', chip_id: '',
+                medical_has: '', medical_tags: [], medical_other: '', clinic: '',
+                service_type: '', termsRead: false, highRiskRead: false, signature: null, signature_time: '',
+                checkInDate: '', checkOutDate: '',
+                room_type: '', room_price: '',
+                barking: '', boardingExp: '', foodGuard: '', peePad: '', vaccine: '', deworming: '',
+                crateTraining: '', allergies: '', personality: '', attention: ''
+            });
+
+            const isHighRisk = useMemo(() => formData.age_type === 'adult' && parseInt(formData.age) >= 8, [formData.age, formData.age_type]);
+            const allTermsRead = useMemo(() => formData.termsRead && (!isHighRisk || formData.highRiskRead), [formData.termsRead, formData.highRiskRead, isHighRisk]);
             
-            // 主圖檔名
-            const heroImage = 'line_oa_chat_260122_020220_group_1.jpg';
+            const shakeElement = (id) => {
+                const el = document.getElementById(id);
+                if(el) {
+                    el.scrollIntoView({behavior:'smooth', block:'center'});
+                    el.classList.add('animate-shake', 'border-red-500');
+                    setTimeout(()=>el.classList.remove('animate-shake', 'border-red-500'), 1000);
+                }
+            };
 
+            const handleStartSignature = () => {
+                if(!formData.termsRead) { shakeElement('btn-terms'); return; }
+                if(isHighRisk && !formData.highRiskRead) { shakeElement('btn-highrisk'); return; }
+                setShowSigModal(true);
+            };
+
+            const medicalOptions = ['氣喘', '癲癇', '骨折', '腸炎', '血便', '血尿', '懷孕', '心臟病', '白內障', '心絲蟲', '腹膜炎', '腹積水', '氣管塌陷', '艾利希體', '髖關節問題', '傳診性疾病', '手術外傷未癒合', '+ 其他'];
+            const crateOptions = ['有，平常在家都有在圍欄內或籠子睡覺', '有，以前有訓練過但日常沒有維持', '有，但不確認現在能不能適應', '沒有，但之前在外住宿在房間可以適應得很好', '從來沒有'];
+
+            // 房型價格資料 (更新文案與價格)
+            const roomRates = {
+                cat: [
+                    { name: '標準房', price: 500, note: '簡約乾淨' },
+                    { name: '經典房', price: 600, note: '跳台玩具' },
+                    { name: '景觀房', price: 700, note: '自然採光' },
+                    { name: '景觀豪華房', price: 800, note: '挑高設計' }
+                ],
+                dog: [
+                    { name: '標準房', price: 600, note: '小型犬適用' },
+                    { name: '經典房', price: 700, note: '自在翻身' },
+                    { name: '豪華房', price: 800, note: '寬敞不擁擠' },
+                    { name: '夢17經典房', price: 1200, note: '高挑大空間' }
+                ]
+            };
+
+            useEffect(() => {
+                const handleHash = () => {
+                    const hash = window.location.hash.slice(1);
+                    if (['grooming', 'boarding'].includes(hash)) setView(hash); else setView('home');
+                };
+                window.addEventListener('hashchange', handleHash);
+                handleHash();
+                return () => window.removeEventListener('hashchange', handleHash);
+            }, []);
+
+            useEffect(() => {
+                const handleScroll = () => setScrolled(window.scrollY > 20);
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            const updateField = (key, value) => setFormData(prev => ({ ...prev, [key]: value }));
+            const toggleArray = (key, value) => setFormData(prev => {
+                const arr = prev[key];
+                return { ...prev, [key]: arr.includes(value) ? arr.filter(i => i !== value) : [...arr, value] };
+            });
+
+            const [showSigModal, setShowSigModal] = useState(false);
+            const [showTermsModal, setShowTermsModal] = useState(false);
+            const [showHighRiskModal, setShowHighRiskModal] = useState(false);
+
+            const handleSignatureSave = (sigData) => {
+                const now = new Date();
+                const timeString = `${now.getFullYear()}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getDate().toString().padStart(2,'0')} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+                setFormData(prev => ({ ...prev, signature: sigData, signature_time: timeString }));
+            };
+
+            // Entry Point
+            if (view === 'home') {
+                return (
+                    <div className="min-h-screen flex flex-col items-center justify-center p-6 py-10 relative">
+                        <div className="absolute top-[10%] left-[-10%] w-72 h-72 bg-dream-gold opacity-10 rounded-full blur-[80px] animate-blob"></div>
+                        <div className="absolute bottom-[10%] right-[-10%] w-80 h-80 bg-dream-navy opacity-[0.07] rounded-full blur-[100px] animate-blob" style={{ animationDelay: '3s' }}></div>
+                        <div className="w-full max-w-[500px] flex flex-col items-center z-10 p-6 md:p-8 rounded-[40px] glass-container animate-fade-up">
+                            <header className="flex flex-col items-center mb-6 text-center"><img src="logo.png" className="w-56 h-auto object-contain mb-4 hover:scale-105 transition-transform duration-500" alt="Dream 17" /><div className="space-y-0.5"><h1 className="text-xl font-bold tracking-[0.1em] text-dream-navy">夢17精品寵物美容旅館</h1><p className="text-[10px] text-dream-gold font-bold tracking-[0.3em] uppercase opacity-80">Forever Family</p></div></header>
+                            <main className="w-full space-y-4 mb-10 px-1">
+                                <button onClick={() => window.location.hash = 'grooming'} className="glass-button group w-full p-5 rounded-[24px] flex items-center justify-between cursor-pointer"><div className="flex items-center gap-5 relative z-10"><div className="w-14 h-14 flex items-center justify-center rounded-[20px] bg-white text-dream-navy shadow-[0_4px_20px_rgba(235,235,235,1)] group-hover:scale-110 transition-transform duration-500"><Icons.Scissors /></div><div className="text-left space-y-0.5"><span className="text-[10px] font-bold text-dream-gold tracking-[0.2em] uppercase">Grooming</span><h3 className="font-bold text-[19px] text-dream-navy group-hover:text-dream-gold/90 transition-colors">美容 / SPA</h3><p className="text-[12px] text-gray-400 font-medium tracking-wide">給寶貝最無微不至的愛</p></div></div><div className="text-dream-gold/30 group-hover:text-dream-gold group-hover:translate-x-1 transition-all duration-300 relative z-10"><Icons.Arrow /></div></button>
+                                <button onClick={() => window.location.hash = 'boarding'} className="glass-button group w-full p-5 rounded-[24px] flex items-center justify-between cursor-pointer"><div className="flex items-center gap-5 relative z-10"><div className="w-14 h-14 flex items-center justify-center rounded-[20px] bg-white text-dream-navy shadow-[0_4px_20px_rgba(235,235,235,1)] group-hover:scale-110 transition-transform duration-500"><Icons.Home /></div><div className="text-left space-y-0.5"><span className="text-[10px] font-bold text-dream-gold tracking-[0.2em] uppercase">Boarding</span><h3 className="font-bold text-[19px] text-dream-navy group-hover:text-dream-gold/90 transition-colors">安親 / 住宿</h3><p className="text-[12px] text-gray-400 font-medium tracking-wide">24H 監控陪伴，安心託付</p></div></div><div className="text-dream-gold/30 group-hover:text-dream-gold group-hover:translate-x-1 transition-all duration-300 relative z-10"><Icons.Arrow /></div></button>
+                            </main>
+                            <footer className="w-full flex flex-col items-center space-y-6"><div className="flex gap-4 w-full px-2"><a href="tel:032875350" className="flex-1 h-11 border border-dream-gold/30 bg-white/60 text-dream-navy rounded-full font-bold text-[13px] flex items-center justify-center gap-2 hover:bg-white transition-all shadow-sm"><Icons.Phone /> 撥打電話</a><a href="https://line.me/R/ti/p/@149veapq" className="flex-1 h-11 border border-dream-gold/30 bg-white/60 text-dream-navy rounded-full font-bold text-[13px] flex items-center justify-center gap-2 hover:bg-white transition-all shadow-sm"><img src="line.png" className="w-5 h-5 object-contain" alt="LINE" /><span>加 LINE 預約</span></a></div><div className="text-center space-y-2"><div className="flex flex-col items-center gap-1.5"><div className="flex items-center gap-2 text-dream-navy text-[11px] font-bold tracking-wide bg-white/40 px-5 py-1.5 rounded-full"><Icons.MapPin /> 桃園市中壢區公園路二段250號</div><p className="text-[9px] text-gray-400 font-bold tracking-[0.1em] uppercase">特寵業字第 C1110588 號</p></div><div className="pt-6 opacity-30"><p className="text-[10px] text-dream-navy uppercase tracking-[0.5em] font-bold">Designed by Shiba Studio</p></div></div></footer>
+                        </div>
+                    </div>
+                );
+            }
+
+            // Forms (Grooming & Boarding)
             return (
-                <div className="min-h-screen w-full flex flex-col md:flex-row bg-dream-cream bg-marble overflow-hidden relative">
-                    
-                    {/* --- 左側 (電腦版) / 上方 (手機版)：城堡視覺區 --- */}
-                    <div className="w-full md:w-[55%] h-[40vh] md:h-screen relative castle-arch overflow-hidden shadow-2xl z-10 bg-dream-navy">
-                        <div className="absolute inset-0">
-                            <img 
-                                src={heroImage} 
-                                className="w-full h-full object-cover opacity-90 scale-105 animate-[float_10s_ease-in-out_infinite]" 
-                                alt="Dream 17 Castle Environment" 
-                            />
+                <div className="min-h-screen bg-[#FAF8F5] pb-32">
+                    <nav className={`fixed top-0 left-0 w-full z-40 transition-all duration-300 ${scrolled ? 'glass-nav py-3 shadow-sm' : 'bg-transparent py-5'}`}>
+                        <div className="max-w-md mx-auto px-6 flex items-center justify-between">
+                            <button onClick={() => window.location.hash = 'home'} className="w-10 h-10 rounded-full glass-input flex items-center justify-center text-dream-navy hover:bg-white"><Icons.ArrowLeft /></button>
+                            <span className="font-bold text-lg text-dream-navy tracking-widest">{view === 'grooming' ? '美容預約單' : '住宿預約與健康問卷'}</span>
+                            <div className="w-10"></div>
                         </div>
-                        <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-dream-navy/90 via-dream-navy/20 to-transparent"></div>
-                        <div className="absolute top-6 left-6 right-6 bottom-6 border border-white/20 rounded-[inherit] pointer-events-none"></div>
+                    </nav>
 
-                        <div className="absolute bottom-10 left-10 md:bottom-20 md:left-20 text-white hidden md:block animate-slide-up">
-                            <div className="flex items-center gap-2 mb-4">
-                                <div className="h-[1px] w-10 bg-dream-gold"></div>
-                                <span className="text-dream-gold font-bold tracking-widest text-sm uppercase">Luxury Pet Hotel</span>
-                            </div>
-                            <h2 className="text-5xl lg:text-6xl font-serif font-bold leading-tight drop-shadow-lg">
-                                給毛孩最極致的<br/>
-                                <span className="text-dream-gold italic">城堡禮遇</span>
-                            </h2>
-                        </div>
-                    </div>
+                    <main className="pt-24 px-4 max-w-md mx-auto space-y-6 animate-fade-in">
+                        <section className="glass-panel p-6 rounded-[32px] space-y-4 border-l-4 border-l-dream-line">
+                            <h3 className="font-bold text-dream-navy flex items-center gap-2"><img src="line.png" className="w-6 h-6" alt="Line"/> 加入官方 LINE</h3>
+                            <p className="text-xs text-gray-500 pl-8 font-bold">ID: @149veapq</p>
+                            <div className="grid grid-cols-2 gap-3"><a href="https://line.me/R/ti/p/@149veapq" className="bg-gray-50 p-3 rounded-xl text-center border hover:bg-white transition-colors"><div className="text-xs text-gray-400 mb-1">Step 1</div><div className="text-sm font-bold text-dream-line">點擊加入好友</div></a><div className="bg-red-50 p-3 rounded-xl text-center border border-red-100"><div className="text-xs text-red-400 mb-1">Step 2</div><div className="text-sm font-bold text-dream-red">務必傳送貼圖</div></div></div>
+                            <button onClick={() => updateField('lineAdded', !formData.lineAdded)} className={`w-full py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${formData.lineAdded ? 'bg-dream-line text-white shadow-lg shadow-green-200' : 'bg-white border text-gray-400'}`}>{formData.lineAdded ? <Icons.Check /> : null}{formData.lineAdded ? '我已完成上述兩步驟' : '確認：我已完成上述兩步驟'}</button>
+                        </section>
 
-                    {/* --- 右側 (電腦版) / 下方 (手機版)：操作互動區 --- */}
-                    <div className="w-full md:w-[45%] flex flex-col justify-center items-center relative z-20 -mt-16 md:mt-0">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-dream-gold/10 rounded-full blur-[80px] pointer-events-none"></div>
+                        <section className="glass-panel p-6 rounded-[32px] space-y-6">
+                            <div className="flex items-center gap-3 pb-2 border-b border-gray-100"><div className="p-2 bg-dream-navy/5 rounded-lg text-dream-navy"><Icons.Phone /></div><h3 className="font-bold text-dream-navy">飼主基本資料</h3></div>
+                            <InputGroup label="電子郵件" required><TextInput placeholder="寄送契約副本用" value={formData.email} onChange={e=>updateField('email', e.target.value)} /></InputGroup>
+                            <InputGroup label="主人姓名" required><TextInput placeholder="請輸入全名" value={formData.owner_name} onChange={e=>updateField('owner_name', e.target.value)} /></InputGroup>
+                            <div className="grid grid-cols-[1fr,auto] gap-2 items-end"><InputGroup label="連絡電話" required><TextInput type="tel" placeholder="09xx-xxx-xxx" value={formData.phone} onChange={e=>updateField('phone', e.target.value)} /></InputGroup><button className="h-12 px-4 rounded-xl bg-dream-navy text-white text-xs font-bold shadow-md">舊客<br/>查詢</button></div>
+                            <InputGroup label={`身分證字號 ${view === 'boarding' ? '(入住請攜帶正本核對)' : ''}`} required><TextInput placeholder="A123456789" value={formData.owner_id} onChange={e=>updateField('owner_id', e.target.value)} /></InputGroup>
+                            <InputGroup label="通訊地址" required><TextInput placeholder="請輸入完整地址" value={formData.address} onChange={e=>updateField('address', e.target.value)} /></InputGroup>
+                            <div className="p-4 bg-red-50 rounded-2xl space-y-4 border border-red-100"><InputGroup label="緊急聯絡人" required><TextInput placeholder="姓名" value={formData.emergency_name} onChange={e=>updateField('emergency_name', e.target.value)} /></InputGroup><InputGroup label="緊急電話" required><TextInput type="tel" placeholder="電話" value={formData.emergency_phone} onChange={e=>updateField('emergency_phone', e.target.value)} /></InputGroup></div>
+                        </section>
 
-                        <div className="w-full max-w-md px-6 pb-12 md:px-12 md:py-0 space-y-8 animate-slide-up" style={{animationDelay: '0.2s'}}>
+                        <section className="glass-panel p-6 rounded-[32px] space-y-6">
+                            <div className="flex items-center gap-3 pb-2 border-b border-gray-100"><div className="p-2 bg-dream-navy/5 rounded-lg text-dream-navy"><Icons.Scissors /></div><h3 className="font-bold text-dream-navy">寵物詳細資料</h3></div>
                             
-                            {/* Logo 區塊 - 修改：去除所有背景框線，直接顯示去背圖 */}
-                            <div className="flex flex-col items-center md:items-start space-y-2">
-                                <div className="w-48 md:w-56 relative z-30 mb-2">
-                                    <img 
-                                        src="logo.png" 
-                                        className="w-full h-auto object-contain drop-shadow-md" 
-                                        alt="Dream 17 Logo" 
-                                    />
+                            {/* 1. 寵物種類選擇 */}
+                            <InputGroup label="寵物種類" required>
+                                <div className="flex gap-3">
+                                    <button 
+                                        onClick={() => { updateField('pet_type', 'dog'); updateField('room_type', ''); updateField('room_price', ''); }} 
+                                        className={`flex-1 py-3 rounded-xl border-2 text-sm font-bold transition-all flex items-center justify-center gap-2 ${formData.pet_type === 'dog' ? 'bg-dream-navy text-white border-dream-navy shadow-md' : 'bg-white text-gray-500 border-gray-200'}`}
+                                    >
+                                        <div className="text-xl">🐶</div> 狗狗
+                                    </button>
+                                    <button 
+                                        onClick={() => { updateField('pet_type', 'cat'); updateField('room_type', ''); updateField('room_price', ''); }} 
+                                        className={`flex-1 py-3 rounded-xl border-2 text-sm font-bold transition-all flex items-center justify-center gap-2 ${formData.pet_type === 'cat' ? 'bg-dream-navy text-white border-dream-navy shadow-md' : 'bg-white text-gray-500 border-gray-200'}`}
+                                    >
+                                        <div className="text-xl">🐱</div> 貓咪
+                                    </button>
                                 </div>
-                                <div className="space-y-1 text-center md:text-left w-full pl-2">
-                                    <h1 className="text-2xl md:text-3xl font-serif font-bold text-dream-navy">夢17精品寵物美容旅館</h1>
-                                    <p className="text-dream-gold font-bold text-xs tracking-[0.3em] uppercase">Dream 17 • Forever Family</p>
+                            </InputGroup>
+
+                            {view === 'boarding' && (
+                                <div className="grid grid-cols-2 gap-4 animate-slide-down">
+                                    <InputGroup label="入住日期" required><input type="date" className="w-full h-12 px-4 rounded-xl glass-input text-dream-navy font-bold" value={formData.checkInDate} onChange={e=>updateField('checkInDate', e.target.value)} /></InputGroup>
+                                    <InputGroup label="退房日期" required><input type="date" className="w-full h-12 px-4 rounded-xl glass-input text-dream-navy font-bold" value={formData.checkOutDate} onChange={e=>updateField('checkOutDate', e.target.value)} /></InputGroup>
                                 </div>
-                            </div>
+                            )}
+                            <div className="grid grid-cols-2 gap-4"><InputGroup label="寵物名字" required><TextInput value={formData.pet_name} onChange={e=>updateField('pet_name', e.target.value)} /></InputGroup><InputGroup label="品種" required><TextInput value={formData.breed} onChange={e=>updateField('breed', e.target.value)} /></InputGroup></div>
+                            <InputGroup label="體重 (kg)" required><TextInput type="number" value={formData.weight} onChange={e=>updateField('weight', e.target.value)} /></InputGroup>
+                            <InputGroup label="年齡" required><div className="flex gap-2 mb-2">{['滿一歲', '未滿一歲'].map(opt => (<button key={opt} onClick={()=>updateField('age_type', opt === '滿一歲' ? 'adult' : 'baby')} className={`flex-1 py-2 rounded-xl text-xs font-bold border-2 ${formData.age_type === (opt === '滿一歲' ? 'adult' : 'baby') ? 'bg-dream-navy text-white border-dream-navy' : 'bg-white text-gray-400 border-gray-200'}`}>{opt}</button>))}</div>{formData.age_type === 'adult' ? <TextInput type="number" placeholder="請輸入歲數" value={formData.age} onChange={e=>updateField('age', e.target.value)} /> : <select className="w-full h-12 px-4 rounded-xl glass-input font-bold text-dream-navy" value={formData.age_months} onChange={e=>updateField('age_months', e.target.value)}><option>請選擇月齡</option>{[...Array(11)].map((_,i)=><option key={i} value={i+1}>{i+1} 個月</option>)}</select>}</InputGroup>
+                            <div className="grid grid-cols-2 gap-4"><InputGroup label="性別" required><div className="flex gap-2">{['公', '母'].map(v => <button key={v} onClick={()=>updateField('sex', v)} className={`flex-1 h-10 rounded-xl border-2 text-sm font-bold ${formData.sex === v ? 'bg-dream-navy text-white border-dream-navy' : 'bg-white text-gray-400 border-gray-200'}`}>{v}</button>)}</div></InputGroup><InputGroup label="結紮" required><div className="flex gap-2">{['是', '否'].map(v => <button key={v} onClick={()=>updateField('fix', v)} className={`flex-1 h-10 rounded-xl border-2 text-sm font-bold ${formData.fix === v ? 'bg-dream-navy text-white border-dream-navy' : 'bg-white text-gray-400 border-gray-200'}`}>{v}</button>)}</div></InputGroup></div>
+                            <InputGroup label="社交狀況 (可複選)" required><div className="space-y-3"><div className="grid grid-cols-2 gap-3">{['有攻擊性', '無攻擊性'].map(opt => (<button key={opt} onClick={()=>toggleArray('social_traits', opt)} className={`w-full py-2.5 rounded-xl border-2 text-xs font-bold transition-all ${formData.social_traits.includes(opt) ? 'bg-dream-navy text-white border-dream-navy' : 'bg-white text-gray-500 border-gray-200'}`}>{opt}</button>))}</div><div className="flex flex-col gap-2">{['可與狗朋友們一起玩耍', '不能與狗朋友們一起玩耍'].map(opt => (<button key={opt} onClick={()=>toggleArray('social_traits', opt)} className={`w-full py-2.5 rounded-xl border-2 text-xs font-bold text-left px-4 transition-all ${formData.social_traits.includes(opt) ? 'bg-dream-navy text-white border-dream-navy' : 'bg-white text-gray-500 border-gray-200'}`}>{opt}</button>))}</div></div></InputGroup>
+                            <InputGroup label="美容性情與攻擊性評估" required><div className="space-y-3"><RadioButton label="天使寶寶" subText="個性溫和，無任何攻擊紀錄，也不怕生。" selected={formData.temperament === '天使寶寶'} onClick={()=>updateField('temperament', '天使寶寶')} /><RadioButton label="有點緊張" subText="膽小怕生，可能會低吼或閃躲，但未曾咬人。" selected={formData.temperament === '有點緊張'} onClick={()=>updateField('temperament', '有點緊張')} /><RadioButton danger label={<>恰北北/護主 <span className="text-dream-red text-[10px] ml-1">(⚠️ 請務必告知)</span></>} subText="對特定部位敏感，或看到陌生人會兇，曾有攻擊紀錄。" selected={formData.temperament === '恰北北'} onClick={()=>updateField('temperament', '恰北北')} /></div></InputGroup>
+                            <InputGroup label="晶片狀態" required><div className="flex flex-wrap gap-2"><button onClick={()=>updateField('chip_status', '有晶片')} className={`px-3 py-2 rounded-xl border-2 text-xs font-bold ${formData.chip_status === '有晶片' ? 'bg-dream-navy text-white border-dream-navy' : 'bg-white text-gray-500 border-gray-200'}`}>有晶片</button><button onClick={()=>updateField('chip_status', '有晶片(號碼不詳)')} className={`px-3 py-2 rounded-xl border-2 text-xs font-bold ${formData.chip_status === '有晶片(號碼不詳)' ? 'bg-dream-navy text-white border-dream-navy' : 'bg-white text-gray-500 border-gray-200'}`}>有晶片(號碼不詳)</button><button onClick={()=>updateField('chip_status', '無晶片')} className={`px-3 py-2 rounded-xl border-2 text-xs font-bold ${formData.chip_status === '無晶片' ? 'bg-dream-navy text-white border-dream-navy' : 'bg-white text-gray-500 border-gray-200'}`}>無晶片</button></div>{formData.chip_status === '有晶片' && (<div className="animate-slide-down mt-2"><TextInput placeholder="請輸入晶片號碼" value={formData.chip_id} onChange={e=>updateField('chip_id', e.target.value)} /></div>)}</InputGroup>
+                            <InputGroup label="過往病史 (可複選)" required><div className="flex gap-2 mb-2"><button onClick={() => { updateField('medical_has', '有'); }} className={`flex-1 py-2 rounded-xl text-xs font-bold border-2 ${formData.medical_has === '有' ? 'bg-dream-navy text-white border-dream-navy' : 'bg-white border-gray-200'}`}>有</button><button onClick={() => { updateField('medical_has', '無'); updateField('medical_tags', []); updateField('medical_other', ''); }} className={`flex-1 py-2 rounded-xl text-xs font-bold border-2 ${formData.medical_has === '無' ? 'bg-dream-navy text-white border-dream-navy' : 'bg-white border-gray-200'}`}>無</button></div>{formData.medical_has === '有' && (<div className="space-y-3 animate-slide-down bg-gray-50 p-4 rounded-xl border border-gray-200"><div className="flex flex-wrap gap-2">{medicalOptions.map(option => (<button key={option} onClick={() => toggleArray('medical_tags', option)} className={`px-3 py-1.5 rounded-lg text-[11px] font-bold border transition-all ${formData.medical_tags.includes(option) ? 'bg-dream-gold text-white border-dream-gold shadow-sm' : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'}`}>{option}</button>))}</div>{formData.medical_tags.includes('+ 其他') && (<input type="text" placeholder="請說明其他病史" className="w-full p-3 rounded-xl border text-xs font-bold focus:outline-none focus:border-dream-gold" value={formData.medical_other} onChange={e => updateField('medical_other', e.target.value)} />)}</div>)}</InputGroup>
+                            <InputGroup label="指定就醫診療機構"><TextInput placeholder="(若未填寫，則送往特約醫院)" value={formData.clinic} onChange={e=>updateField('clinic', e.target.value)} /><div className="mt-2 text-xs text-gray-500 bg-gray-50 p-3 rounded-xl border border-gray-100"><span className="font-bold text-dream-navy">特約醫院：</span>[待確認]</div></InputGroup>
+                        </section>
 
-                            {/* 服務選擇卡片 */}
-                            <div className="grid gap-4">
-                                {/* 美容卡片 */}
-                                <button onClick={() => window.location.href='#grooming'} className="group relative w-full bg-white p-5 rounded-2xl border border-dream-goldLight shadow-sm hover:shadow-xl hover:border-dream-gold transition-all duration-300 flex items-center gap-5 text-left overflow-hidden">
-                                    <div className="absolute inset-0 bg-dream-navy/5 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out"></div>
-                                    <div className="w-14 h-14 rounded-full bg-dream-navy text-white flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:bg-dream-gold transition-all duration-300 relative z-10">
-                                        <Icons.Scissors />
+                        {/* 房型選擇區塊 (僅在住宿頁面顯示) */}
+                        {view === 'boarding' && (
+                            <section className="glass-panel p-6 rounded-[32px] space-y-6 animate-slide-down">
+                                <div className="flex items-center gap-3 pb-2 border-b border-gray-100"><div className="p-2 bg-dream-navy/5 rounded-lg text-dream-navy"><Icons.Home /></div><h3 className="font-bold text-dream-navy">房型與價格選擇</h3></div>
+                                
+                                {/* 根據 pet_type 顯示對應房型 */}
+                                {formData.pet_type === 'cat' && (
+                                    <div className="space-y-2">
+                                        <div className="text-xs font-bold text-dream-gold ml-1">🐱 貓咪專區</div>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            {roomRates.cat.map((room) => (
+                                                <button 
+                                                    key={room.name} 
+                                                    onClick={() => { updateField('room_type', `貓-${room.name}`); updateField('room_price', room.price); }}
+                                                    className={`p-3 rounded-xl border-2 text-left transition-all relative overflow-hidden ${formData.room_type === `貓-${room.name}` ? 'bg-dream-navy text-white border-dream-navy' : 'bg-white border-gray-200 hover:border-dream-gold'}`}
+                                                >
+                                                    <div className="text-xs font-bold mb-1">{room.name}</div>
+                                                    <div className="text-lg font-bold">${room.price}/晚</div>
+                                                    {room.note && <div className="text-[10px] opacity-70 mt-1 font-medium">{room.note}</div>}
+                                                </button>
+                                            ))}
+                                        </div>
                                     </div>
-                                    <div className="flex-1 relative z-10">
-                                        <h3 className="text-lg font-bold text-dream-navy group-hover:text-dream-navy transition-colors">精緻美容</h3>
-                                        <p className="text-xs text-slate-500 mt-1 font-medium">頂級洗護 SPA · 專業造型修剪</p>
-                                    </div>
-                                    <div className="text-dream-goldLight group-hover:text-dream-gold relative z-10 transition-transform group-hover:translate-x-1">
-                                        <Icons.ArrowRight />
-                                    </div>
-                                </button>
+                                )}
 
-                                {/* 住宿卡片 - 修改：Icon 更新為 Bed (床鋪) */}
-                                <button onClick={() => window.location.href='#boarding'} className="group relative w-full bg-white p-5 rounded-2xl border border-dream-goldLight shadow-sm hover:shadow-xl hover:border-dream-gold transition-all duration-300 flex items-center gap-5 text-left overflow-hidden">
-                                    <div className="absolute inset-0 bg-dream-gold/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out"></div>
-                                    <div className="w-14 h-14 rounded-full bg-white border-2 border-dream-gold text-dream-navy flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:bg-dream-navy group-hover:text-white group-hover:border-dream-navy transition-all duration-300 relative z-10">
-                                        <Icons.Bed />
+                                {formData.pet_type === 'dog' && (
+                                    <div className="space-y-2">
+                                        <div className="text-xs font-bold text-dream-gold ml-1">🐶 狗狗專區</div>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            {roomRates.dog.map((room) => (
+                                                <button 
+                                                    key={room.name} 
+                                                    onClick={() => { updateField('room_type', `狗-${room.name}`); updateField('room_price', room.price); }}
+                                                    className={`p-3 rounded-xl border-2 text-left transition-all ${formData.room_type === `狗-${room.name}` ? 'bg-dream-navy text-white border-dream-navy' : 'bg-white border-gray-200 hover:border-dream-gold'}`}
+                                                >
+                                                    <div className="text-xs font-bold mb-1">{room.name}</div>
+                                                    <div className="text-lg font-bold">${room.price}/晚</div>
+                                                    {room.note && <div className="text-[10px] opacity-70 mt-1 font-medium">{room.note}</div>}
+                                                </button>
+                                            ))}
+                                        </div>
                                     </div>
-                                    <div className="flex-1 relative z-10">
-                                        <h3 className="text-lg font-bold text-dream-navy group-hover:text-dream-navy transition-colors">精品住宿</h3>
-                                        <p className="text-xs text-slate-500 mt-1 font-medium">24H 舒適陪伴 · 不關籠自由空間</p>
-                                    </div>
-                                    <div className="text-dream-goldLight group-hover:text-dream-gold relative z-10 transition-transform group-hover:translate-x-1">
-                                        <Icons.ArrowRight />
-                                    </div>
-                                </button>
-                            </div>
+                                )}
+                            </section>
+                        )}
 
-                            {/* 聯絡按鈕區 */}
-                            <div className="flex gap-4 pt-4 border-t border-dream-gold/20">
-                                <a href="tel:032875350" className="flex-1 py-4 bg-white border border-dream-goldLight text-dream-navy rounded-xl font-bold text-sm shadow-sm hover:bg-dream-navy hover:text-white hover:shadow-lg transition-all flex items-center justify-center gap-2 group">
-                                    <Icons.Phone /> 撥打電話
-                                </a>
-                                <a href="https://line.me/R/ti/p/your_line_id" className="flex-1 py-4 bg-white border border-dream-goldLight text-dream-navy rounded-xl font-bold text-sm shadow-sm hover:bg-dream-navy hover:text-white hover:shadow-lg transition-all flex items-center justify-center gap-2 group">
-                                    <img src="line.png" className="w-6 h-6 object-contain" alt="LINE" />
-                                    <span>加好友預約</span>
-                                </a>
-                            </div>
-
-                            {/* 地址 */}
-                            <div className="text-center md:text-left">
-                                <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-white/60 rounded-full border border-dream-goldLight/50 text-xs font-bold text-slate-500 backdrop-blur-sm">
-                                    <Icons.MapPin />
-                                    桃園市中壢區高鐵南路二段266號
+                        {view === 'boarding' && (
+                            <section className="glass-panel p-6 rounded-[32px] space-y-6 animate-slide-down">
+                                <div className="flex items-center gap-3 pb-2 border-b border-gray-100"><div className="p-2 bg-dream-navy/5 rounded-lg text-dream-navy"><Icons.Activity /></div><h3 className="font-bold text-dream-navy">住宿行為與健康問卷</h3></div>
+                                
+                                <div className="grid grid-cols-2 gap-4">
+                                    <InputGroup label="容易吠叫嗎" required><div className="flex gap-2">{['會','不會'].map(v=><button key={v} onClick={()=>updateField('barking',v)} className={`flex-1 h-10 rounded-xl border-2 text-xs font-bold ${formData.barking===v?'bg-dream-navy text-white border-dream-navy':'bg-white text-gray-500 border-gray-200'}`}>{v}</button>)}</div></InputGroup>
+                                    <InputGroup label="有住宿經驗嗎" required><div className="flex gap-2">{['有','沒有'].map(v=><button key={v} onClick={()=>updateField('boardingExp',v)} className={`flex-1 h-10 rounded-xl border-2 text-xs font-bold ${formData.boardingExp===v?'bg-dream-navy text-white border-dream-navy':'bg-white text-gray-500 border-gray-200'}`}>{v}</button>)}</div></InputGroup>
+                                    <InputGroup label="會護食嗎" required><div className="flex gap-2">{['會','不會'].map(v=><button key={v} onClick={()=>updateField('foodGuard',v)} className={`flex-1 h-10 rounded-xl border-2 text-xs font-bold ${formData.foodGuard===v?'bg-dream-navy text-white border-dream-navy':'bg-white text-gray-500 border-gray-200'}`}>{v}</button>)}</div></InputGroup>
+                                    <InputGroup label="會用尿布墊嗎" required><div className="flex gap-2">{['會','不會'].map(v=><button key={v} onClick={()=>updateField('peePad',v)} className={`flex-1 h-10 rounded-xl border-2 text-xs font-bold ${formData.peePad===v?'bg-dream-navy text-white border-dream-navy':'bg-white text-gray-500 border-gray-200'}`}>{v}</button>)}</div></InputGroup>
+                                    <InputGroup label="定期施打疫苗" required><div className="flex gap-2">{['有','沒有'].map(v=><button key={v} onClick={()=>updateField('vaccine',v)} className={`flex-1 h-10 rounded-xl border-2 text-xs font-bold ${formData.vaccine===v?'bg-dream-navy text-white border-dream-navy':'bg-white text-gray-500 border-gray-200'}`}>{v}</button>)}</div></InputGroup>
+                                    <InputGroup label="定期驅蟲" required><div className="flex gap-2">{['有','無'].map(v=><button key={v} onClick={()=>updateField('deworming',v)} className={`flex-1 h-10 rounded-xl border-2 text-xs font-bold ${formData.deworming===v?'bg-dream-navy text-white border-dream-navy':'bg-white text-gray-500 border-gray-200'}`}>{v}</button>)}</div></InputGroup>
                                 </div>
-                            </div>
 
+                                <InputGroup label="籠內訓練狀況" required>
+                                    <div className="flex flex-col gap-2">
+                                        {crateOptions.map(opt => (
+                                            <button key={opt} onClick={()=>updateField('crateTraining', opt)} className={`w-full py-3 px-4 rounded-xl border-2 text-xs font-bold text-left transition-all ${formData.crateTraining === opt ? 'bg-dream-navy text-white border-dream-navy' : 'bg-white text-gray-500 border-gray-200'}`}>{opt}</button>
+                                        ))}
+                                    </div>
+                                </InputGroup>
+
+                                <InputGroup label="飲食過敏"><TextInput value={formData.allergies} onChange={e=>updateField('allergies', e.target.value)} /></InputGroup>
+                                <InputGroup label="個性備註"><TextInput value={formData.personality} onChange={e=>updateField('personality', e.target.value)} /></InputGroup>
+                                <InputGroup label="特別注意事項"><TextInput value={formData.attention} onChange={e=>updateField('attention', e.target.value)} /></InputGroup>
+                                <InputGroup label="其他需求 or 備註"><textarea className="w-full p-4 rounded-xl glass-input text-dream-navy font-bold h-24" placeholder="請填寫..." onChange={e=>updateField('note', e.target.value)}></textarea></InputGroup>
+                            </section>
+                        )}
+
+                        {view === 'grooming' && (
+                            <section className="glass-panel p-6 rounded-[32px] space-y-6">
+                                <div className="flex items-center gap-3 pb-2 border-b border-gray-100"><div className="p-2 bg-dream-navy/5 rounded-lg text-dream-navy"><Icons.Check /></div><h3 className="font-bold text-dream-navy">本次服務內容</h3></div>
+                                <div className="grid grid-cols-1 gap-4"><button onClick={()=>updateField('service_type', '精緻洗澡')} className={`p-4 rounded-2xl border-2 text-left transition-all ${formData.service_type === '精緻洗澡' ? 'border-dream-navy bg-white shadow-md' : 'border-gray-200 bg-white hover:border-gray-300'}`}><div className="font-bold text-dream-navy mb-1 text-lg">精緻洗澡</div><div className="text-xs text-gray-500">洗毛潤絲·剪指甲·清耳朵·肛門腺·修雜毛·眼部整理</div></button><button onClick={()=>updateField('service_type', '精緻美容')} className={`p-4 rounded-2xl border-2 text-left transition-all ${formData.service_type === '精緻美容' ? 'border-dream-navy bg-white shadow-md' : 'border-gray-200 bg-white hover:border-gray-300'}`}><div className="font-bold text-dream-navy mb-1 text-lg">精緻美容</div><div className="text-xs text-gray-500">基礎洗澡 + 全身造型修剪</div></button><div className="grid grid-cols-2 gap-3"><button onClick={()=>updateField('service_type', '局部修剪')} className={`p-3 rounded-xl border-2 text-sm font-bold ${formData.service_type === '局部修剪' ? 'bg-dream-navy text-white border-dream-navy' : 'bg-white text-gray-500 border-gray-200'}`}>局部修剪</button><button onClick={()=>updateField('service_type', '寵物安親')} className={`p-3 rounded-xl border-2 text-sm font-bold ${formData.service_type === '寵物安親' ? 'bg-dream-navy text-white border-dream-navy' : 'bg-white text-gray-500 border-gray-200'}`}>寵物安親</button></div></div>
+                                <div className="bg-dream-gold/10 p-3 rounded-xl text-xs text-dream-navy font-bold flex items-start gap-2"><Icons.Alert /><span>需於通知完成後一小時內接回，超過時間將收取 $[待確認]/時 安親費用。</span></div>
+                                <InputGroup label="其他需求 or 備註"><textarea className="w-full p-4 rounded-xl glass-input text-dream-navy font-bold h-24" placeholder="請填寫..." onChange={e=>updateField('note', e.target.value)}></textarea></InputGroup>
+                            </section>
+                        )}
+
+                        <section className="glass-panel p-6 rounded-[32px] space-y-5">
+                            <div className="flex items-center gap-3 pb-3 border-b border-gray-100"><div className="p-2.5 bg-dream-navy/5 rounded-xl text-dream-navy"><Icons.Home /></div><h3 className="font-bold text-lg text-dream-navy tracking-wide">乙方（店家資訊）</h3></div>
+                            <div className="space-y-4"><div className="space-y-1"><div className="text-[10px] text-gray-400 font-bold tracking-wider">店家名稱</div><div className="font-bold text-dream-navy text-sm">夢17精品寵物美容旅館</div></div><div className="grid grid-cols-2 gap-4"><div className="space-y-1"><div className="text-[10px] text-gray-400 font-bold tracking-wider">負責人</div><div className="font-bold text-dream-navy text-sm">[待確認]</div></div><div className="space-y-1"><div className="text-[10px] text-gray-400 font-bold tracking-wider">聯絡電話</div><div className="font-bold text-dream-navy text-sm">032875350</div></div></div><div className="space-y-1"><div className="text-[10px] text-gray-400 font-bold tracking-wider">營業資訊</div><div className="font-bold text-dream-navy text-sm">10:00-19:00</div><div className="text-xs text-gray-500 font-medium">桃園市中壢區公園路二段250號</div></div><div className="grid grid-cols-2 gap-3 pt-2"><div className="bg-gray-50 rounded-xl p-3 border border-gray-100"><div className="text-[9px] text-gray-400 font-bold mb-1">特寵業字號</div><div className="text-xs font-bold text-dream-navy">C1110588號</div></div><div className="bg-red-50 rounded-xl p-3 border border-red-100"><div className="text-[9px] text-red-400 font-bold mb-1">緊急就醫</div><div className="text-xs font-bold text-dream-red">[待確認]</div></div></div></div>
+                        </section>
+
+                        <section className="glass-panel p-6 rounded-[32px] space-y-6">
+                            <div className="flex items-center gap-3 pb-2 border-b border-gray-100"><div className="p-2 bg-dream-navy/5 rounded-lg text-dream-navy"><Icons.Pen /></div><h3 className="font-bold text-dream-navy">法律條款與簽署</h3></div>
+                            
+                            <button id="btn-terms" onClick={()=>setShowTermsModal(true)} className={`w-full p-4 rounded-2xl border-2 flex items-center justify-between group ${formData.termsRead ? 'bg-green-50 border-green-200' : 'bg-white border-dream-red/30'}`}><div className="flex items-center gap-3"><div className={`w-10 h-10 rounded-full flex items-center justify-center ${formData.termsRead ? 'bg-green-100 text-dream-line' : 'bg-red-50 text-dream-red'}`}><Icons.Check /></div><div className="text-left"><div className="font-bold text-sm text-dream-navy">{view === 'boarding' ? '寄宿契約條款' : '美容服務契約條款'}</div><div className="text-xs text-gray-400">{formData.termsRead ? '已完成閱讀' : '請點擊詳閱'}</div></div></div><div className="text-xs font-bold px-3 py-1 rounded-full bg-white border">{formData.termsRead ? '已同意' : '待閱讀'}</div></button>
+                            
+                            {isHighRisk && (<button id="btn-highrisk" onClick={()=>setShowHighRiskModal(true)} className={`w-full p-4 rounded-2xl border-2 flex items-center justify-between group animate-slide-down ${formData.highRiskRead ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}><div className="flex items-center gap-3"><div className={`w-10 h-10 rounded-full flex items-center justify-center ${formData.highRiskRead ? 'bg-green-100 text-dream-line' : 'bg-red-100 text-dream-red'}`}><Icons.Alert /></div><div className="text-left"><div className="font-bold text-sm text-dream-red">高齡寵物風險告知</div><div className="text-xs text-red-400 font-bold">檢測到 8 歲以上，務必詳閱</div></div></div><div className={`text-xs font-bold px-3 py-1 rounded-full border ${formData.highRiskRead ? 'bg-white text-green-600' : 'bg-red-500 text-white'}`}>{formData.highRiskRead ? '已同意' : '待閱讀'}</div></button>)}
+                            
+                            <div className={`transition-all ${allTermsRead ? 'opacity-100' : 'opacity-70'}`}>
+                                <div className="text-sm font-bold text-dream-navy mb-2 flex items-center gap-2">數位簽名 {formData.signature ? <span className="text-dream-line text-xs">(已完成)</span> : <span className="text-dream-red">*</span>}</div>
+                                {formData.signature ? (
+                                    <div className="space-y-2"><div className="relative"><img src={formData.signature} className="w-full h-32 object-contain bg-white rounded-xl border border-dream-gold/30" /><button onClick={()=>updateField('signature', null)} className="absolute top-2 right-2 p-1 bg-gray-100 rounded-full text-xs">重簽</button></div><div className="flex justify-end items-center gap-1 text-[10px] font-bold text-dream-navy/60"><span>✅ 已簽署</span><span>時間：{formData.signature_time}</span></div></div>
+                                ) : (
+                                    <button 
+                                        onClick={handleStartSignature} 
+                                        className="w-full h-32 bg-white rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 gap-2 hover:bg-gray-50 transition-colors"
+                                    >
+                                        <Icons.Pen />
+                                        <span className="text-xs font-bold">{allTermsRead ? '點擊此處開始簽名' : '請先閱讀上方條款，解鎖簽名功能'}</span>
+                                    </button>
+                                )}
+                            </div>
+                        </section>
+
+                        <div className="pb-10"><button className="w-full py-5 rounded-[24px] bg-dream-navy text-white text-lg font-bold shadow-xl shadow-dream-navy/30 hover:scale-[1.02] active:scale-95 transition-all">確認並提交預約單</button></div>
+                    </main>
+
+                    <SignaturePadModal isOpen={showSigModal} onClose={()=>setShowSigModal(false)} onSave={handleSignatureSave} />
+
+                    {showTermsModal && (
+                        <div className="fixed inset-0 z-[100] bg-dream-navy/90 backdrop-blur-sm flex flex-col items-center justify-end md:justify-center p-0 md:p-4 animate-fade-in">
+                            <div className="bg-white w-full md:max-w-lg rounded-t-[32px] md:rounded-[32px] overflow-hidden flex flex-col h-[85vh]">
+                                <div className="p-5 border-b bg-gray-50 flex justify-between items-center"><h3 className="font-bold text-dream-navy">{view === 'boarding' ? '寄宿契約條款' : '美容服務契約條款'}</h3><button onClick={()=>setShowTermsModal(false)} className="p-2">✕</button></div>
+                                <div className="flex-1 overflow-y-auto p-6 text-sm text-gray-600 leading-relaxed space-y-4"><p className="font-bold text-dream-navy">一、 共通條款</p><p>1. 服務公約與付款：飼主已詳閱並充分瞭解本工作室{view === 'boarding' ? '住宿' : '美容'}之公約、計費方式及相關規則，並同意遵守與如實付款。</p><p>2. 健康狀況誠實申報：飼主應詳盡且誠實申報寵物健康狀況及特殊需求。</p><p className="font-bold text-dream-navy">二、 服務項目與收費</p><p>收費以毛孩體重、體型、毛量、毛質為評估標準，現場報價為準。</p><div className="h-20"></div></div>
+                                <div className="p-5 border-t bg-white"><button onClick={()=>{updateField('termsRead', true); setShowTermsModal(false);}} className="w-full py-4 bg-dream-navy text-white font-bold rounded-2xl shadow-lg">我已詳閱並同意</button></div>
+                            </div>
                         </div>
-                    </div>
+                    )}
 
-                    <div className="absolute bottom-4 right-0 left-0 text-center md:text-right md:pr-8 z-30 pointer-events-none">
-                        <p className="text-[10px] text-slate-300 md:text-slate-400 font-medium">© 2026 Dream 17. Designed by Shiba Studio</p>
-                    </div>
+                    {showHighRiskModal && (
+                        <div className="fixed inset-0 z-[100] bg-dream-red/90 backdrop-blur-sm flex flex-col items-center justify-end md:justify-center p-0 md:p-4 animate-fade-in">
+                            <div className="bg-white w-full md:max-w-lg rounded-t-[32px] md:rounded-[32px] overflow-hidden flex flex-col h-[85vh]">
+                                <div className="p-5 border-b bg-red-50 flex justify-between items-center border-red-100"><h3 className="font-bold text-dream-red flex items-center gap-2"><Icons.Alert/> 高風險寵物風險告知</h3><button onClick={()=>setShowHighRiskModal(false)} className="p-2">✕</button></div>
+                                <div className="flex-1 overflow-y-auto p-6 text-sm text-gray-600 leading-relaxed space-y-4"><div className="p-4 bg-red-50 rounded-xl text-dream-red font-bold text-xs border border-red-100">⚠️ 您的毛孩已滿 8 歲，屬於高齡階段。</div><p className="font-bold text-gray-800">一、 風險承擔</p><p>本人知悉高齡寵物在{view === 'boarding' ? '住宿' : '美容'}過程中，可能因緊張或其他不可抗力因素，引發潛在健康風險（如心肺功能異常、休克等）。</p><p className="font-bold text-gray-800">二、 緊急處置</p><p>若發生緊急狀況，同意授權本店立即送醫，相關費用由飼主負擔。若因寵物自身年齡或隱疾導致之意外，本店不負損害賠償責任。</p><div className="h-20"></div></div>
+                                <div className="p-5 border-t bg-white"><button onClick={()=>{updateField('highRiskRead', true); setShowHighRiskModal(false);}} className="w-full py-4 bg-dream-red text-white font-bold rounded-2xl shadow-lg">我已詳閱並同意承擔風險</button></div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             );
         };
