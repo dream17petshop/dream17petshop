@@ -10,6 +10,7 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
 
     <script>
         tailwind.config = {
@@ -162,6 +163,23 @@
     <script type="text/babel">
         const { useState, useEffect, useRef, useMemo } = React;
 
+        // --- Lucide Icon ---
+        const Icon = ({ name, size = 20, className = "" }) => {
+            const iconRef = useRef(null);
+            useEffect(() => {
+                if (typeof window.lucide !== 'undefined' && iconRef.current) {
+                    window.lucide.createIcons({
+                        root: iconRef.current, 
+                        attrs: { "stroke-width": 2, class: className }, 
+                        name: name, 
+                        nameAttr: 'data-lucide'
+                    });
+                }
+            }, [name, className]);
+            return <span ref={iconRef} className="inline-flex items-center justify-center"><i data-lucide={name} style={{ width: size, height: size }}></i></span>;
+        };
+
+        // --- Local SVG Icons ---
         const Icons = {
             Scissors: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>,
             Home: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="2.5"/></svg>,
@@ -317,7 +335,7 @@
             const medicalOptions = ['氣喘', '癲癇', '骨折', '腸炎', '血便', '血尿', '懷孕', '心臟病', '白內障', '心絲蟲', '腹膜炎', '腹積水', '氣管塌陷', '艾利希體', '髖關節問題', '傳診性疾病', '手術外傷未癒合', '+ 其他'];
             const crateOptions = ['有，平常在家都有在圍欄內或籠子睡覺', '有，以前有訓練過但日常沒有維持', '有，但不確認現在能不能適應', '沒有，但之前在外住宿在房間可以適應得很好', '從來沒有'];
 
-            // 房型價格資料 (更新文案與價格)
+            // 房型價格資料 (更新狗狗房型資料)
             const roomRates = {
                 cat: [
                     { name: '標準房', price: 500, note: '簡約乾淨' },
@@ -389,7 +407,7 @@
                     <nav className={`fixed top-0 left-0 w-full z-40 transition-all duration-300 ${scrolled ? 'glass-nav py-3 shadow-sm' : 'bg-transparent py-5'}`}>
                         <div className="max-w-md mx-auto px-6 flex items-center justify-between">
                             <button onClick={() => window.location.hash = 'home'} className="w-10 h-10 rounded-full glass-input flex items-center justify-center text-dream-navy hover:bg-white"><Icons.ArrowLeft /></button>
-                            <span className="font-bold text-lg text-dream-navy tracking-widest">{view === 'grooming' ? '美容預約單' : '住宿預約與健康問卷'}</span>
+                            <span className="font-bold text-lg text-dream-navy tracking-widest">{view === 'grooming' ? '美容服務填寫資料' : '住宿服務填寫資料'}</span>
                             <div className="w-10"></div>
                         </div>
                     </nav>
@@ -422,24 +440,51 @@
                                         onClick={() => { updateField('pet_type', 'dog'); updateField('room_type', ''); updateField('room_price', ''); }} 
                                         className={`flex-1 py-3 rounded-xl border-2 text-sm font-bold transition-all flex items-center justify-center gap-2 ${formData.pet_type === 'dog' ? 'bg-dream-navy text-white border-dream-navy shadow-md' : 'bg-white text-gray-500 border-gray-200'}`}
                                     >
-                                        <div className="text-xl">🐶</div> 狗狗
+                                        <div className={formData.pet_type === 'dog' ? 'text-white' : 'text-dream-navy'}><Icon name="dog" size={20} /></div> 狗狗
                                     </button>
                                     <button 
                                         onClick={() => { updateField('pet_type', 'cat'); updateField('room_type', ''); updateField('room_price', ''); }} 
                                         className={`flex-1 py-3 rounded-xl border-2 text-sm font-bold transition-all flex items-center justify-center gap-2 ${formData.pet_type === 'cat' ? 'bg-dream-navy text-white border-dream-navy shadow-md' : 'bg-white text-gray-500 border-gray-200'}`}
                                     >
-                                        <div className="text-xl">🐱</div> 貓咪
+                                        <div className={formData.pet_type === 'cat' ? 'text-white' : 'text-dream-navy'}><Icon name="cat" size={20} /></div> 貓咪
                                     </button>
                                 </div>
                             </InputGroup>
 
+                            {/* 2. 入住日期與房型選擇 (僅住宿顯示) */}
                             {view === 'boarding' && (
-                                <div className="grid grid-cols-2 gap-4 animate-slide-down">
-                                    <InputGroup label="入住日期" required><input type="date" className="w-full h-12 px-4 rounded-xl glass-input text-dream-navy font-bold" value={formData.checkInDate} onChange={e=>updateField('checkInDate', e.target.value)} /></InputGroup>
-                                    <InputGroup label="退房日期" required><input type="date" className="w-full h-12 px-4 rounded-xl glass-input text-dream-navy font-bold" value={formData.checkOutDate} onChange={e=>updateField('checkOutDate', e.target.value)} /></InputGroup>
+                                <div className="space-y-6 animate-slide-down">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <InputGroup label="入住日期" required><input type="date" className="w-full h-12 px-4 rounded-xl glass-input text-dream-navy font-bold" value={formData.checkInDate} onChange={e=>updateField('checkInDate', e.target.value)} /></InputGroup>
+                                        <InputGroup label="退房日期" required><input type="date" className="w-full h-12 px-4 rounded-xl glass-input text-dream-navy font-bold" value={formData.checkOutDate} onChange={e=>updateField('checkOutDate', e.target.value)} /></InputGroup>
+                                    </div>
+
+                                    {/* 房型選擇區塊 */}
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-dream-navy/70 ml-2 tracking-wide">
+                                            選擇房型 ({formData.pet_type === 'dog' ? '狗狗' : '貓咪'}) <span className="text-dream-red">*</span>
+                                        </label>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            {roomRates[formData.pet_type === 'dog' ? 'dog' : 'cat'].map((room) => (
+                                                <button 
+                                                    key={room.name} 
+                                                    onClick={() => { updateField('room_type', room.name); updateField('room_price', room.price); }}
+                                                    className={`p-3 rounded-xl border-2 text-left transition-all relative overflow-hidden group ${formData.room_type === room.name ? 'bg-dream-navy text-white border-dream-navy shadow-md' : 'bg-white text-gray-500 border-gray-200 hover:border-dream-gold'}`}
+                                                >
+                                                    <div className="flex justify-between items-start">
+                                                        <div className="text-xs font-bold mb-1">{room.name}</div>
+                                                        {formData.room_type === room.name && <div className="text-dream-gold bg-white/20 rounded-full p-0.5"><Icons.Check/></div>}
+                                                    </div>
+                                                    <div className="text-lg font-bold">${room.price}<span className="text-[10px] font-normal opacity-80">/晚</span></div>
+                                                    {room.note && <div className={`text-[10px] mt-1 font-medium ${formData.room_type === room.name ? 'text-white/70' : 'text-gray-400'}`}>{room.note}</div>}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
                                 </div>
                             )}
-                            <div className="grid grid-cols-2 gap-4"><InputGroup label="寵物名字" required><TextInput value={formData.pet_name} onChange={e=>updateField('pet_name', e.target.value)} /></InputGroup><InputGroup label="品種" required><TextInput value={formData.breed} onChange={e=>updateField('breed', e.target.value)} /></InputGroup></div>
+
+                            <div className="grid grid-cols-2 gap-4 pt-2 border-t border-gray-100"><InputGroup label="寵物名字" required><TextInput value={formData.pet_name} onChange={e=>updateField('pet_name', e.target.value)} /></InputGroup><InputGroup label="品種" required><TextInput value={formData.breed} onChange={e=>updateField('breed', e.target.value)} /></InputGroup></div>
                             <InputGroup label="體重 (kg)" required><TextInput type="number" value={formData.weight} onChange={e=>updateField('weight', e.target.value)} /></InputGroup>
                             <InputGroup label="年齡" required><div className="flex gap-2 mb-2">{['滿一歲', '未滿一歲'].map(opt => (<button key={opt} onClick={()=>updateField('age_type', opt === '滿一歲' ? 'adult' : 'baby')} className={`flex-1 py-2 rounded-xl text-xs font-bold border-2 ${formData.age_type === (opt === '滿一歲' ? 'adult' : 'baby') ? 'bg-dream-navy text-white border-dream-navy' : 'bg-white text-gray-400 border-gray-200'}`}>{opt}</button>))}</div>{formData.age_type === 'adult' ? <TextInput type="number" placeholder="請輸入歲數" value={formData.age} onChange={e=>updateField('age', e.target.value)} /> : <select className="w-full h-12 px-4 rounded-xl glass-input font-bold text-dream-navy" value={formData.age_months} onChange={e=>updateField('age_months', e.target.value)}><option>請選擇月齡</option>{[...Array(11)].map((_,i)=><option key={i} value={i+1}>{i+1} 個月</option>)}</select>}</InputGroup>
                             <div className="grid grid-cols-2 gap-4"><InputGroup label="性別" required><div className="flex gap-2">{['公', '母'].map(v => <button key={v} onClick={()=>updateField('sex', v)} className={`flex-1 h-10 rounded-xl border-2 text-sm font-bold ${formData.sex === v ? 'bg-dream-navy text-white border-dream-navy' : 'bg-white text-gray-400 border-gray-200'}`}>{v}</button>)}</div></InputGroup><InputGroup label="結紮" required><div className="flex gap-2">{['是', '否'].map(v => <button key={v} onClick={()=>updateField('fix', v)} className={`flex-1 h-10 rounded-xl border-2 text-sm font-bold ${formData.fix === v ? 'bg-dream-navy text-white border-dream-navy' : 'bg-white text-gray-400 border-gray-200'}`}>{v}</button>)}</div></InputGroup></div>
@@ -449,52 +494,6 @@
                             <InputGroup label="過往病史 (可複選)" required><div className="flex gap-2 mb-2"><button onClick={() => { updateField('medical_has', '有'); }} className={`flex-1 py-2 rounded-xl text-xs font-bold border-2 ${formData.medical_has === '有' ? 'bg-dream-navy text-white border-dream-navy' : 'bg-white border-gray-200'}`}>有</button><button onClick={() => { updateField('medical_has', '無'); updateField('medical_tags', []); updateField('medical_other', ''); }} className={`flex-1 py-2 rounded-xl text-xs font-bold border-2 ${formData.medical_has === '無' ? 'bg-dream-navy text-white border-dream-navy' : 'bg-white border-gray-200'}`}>無</button></div>{formData.medical_has === '有' && (<div className="space-y-3 animate-slide-down bg-gray-50 p-4 rounded-xl border border-gray-200"><div className="flex flex-wrap gap-2">{medicalOptions.map(option => (<button key={option} onClick={() => toggleArray('medical_tags', option)} className={`px-3 py-1.5 rounded-lg text-[11px] font-bold border transition-all ${formData.medical_tags.includes(option) ? 'bg-dream-gold text-white border-dream-gold shadow-sm' : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'}`}>{option}</button>))}</div>{formData.medical_tags.includes('+ 其他') && (<input type="text" placeholder="請說明其他病史" className="w-full p-3 rounded-xl border text-xs font-bold focus:outline-none focus:border-dream-gold" value={formData.medical_other} onChange={e => updateField('medical_other', e.target.value)} />)}</div>)}</InputGroup>
                             <InputGroup label="指定就醫診療機構"><TextInput placeholder="(若未填寫，則送往特約醫院)" value={formData.clinic} onChange={e=>updateField('clinic', e.target.value)} /><div className="mt-2 text-xs text-gray-500 bg-gray-50 p-3 rounded-xl border border-gray-100"><span className="font-bold text-dream-navy">特約醫院：</span>[待確認]</div></InputGroup>
                         </section>
-
-                        {/* 房型選擇區塊 (僅在住宿頁面顯示) */}
-                        {view === 'boarding' && (
-                            <section className="glass-panel p-6 rounded-[32px] space-y-6 animate-slide-down">
-                                <div className="flex items-center gap-3 pb-2 border-b border-gray-100"><div className="p-2 bg-dream-navy/5 rounded-lg text-dream-navy"><Icons.Home /></div><h3 className="font-bold text-dream-navy">房型與價格選擇</h3></div>
-                                
-                                {/* 根據 pet_type 顯示對應房型 */}
-                                {formData.pet_type === 'cat' && (
-                                    <div className="space-y-2">
-                                        <div className="text-xs font-bold text-dream-gold ml-1">🐱 貓咪專區</div>
-                                        <div className="grid grid-cols-2 gap-3">
-                                            {roomRates.cat.map((room) => (
-                                                <button 
-                                                    key={room.name} 
-                                                    onClick={() => { updateField('room_type', `貓-${room.name}`); updateField('room_price', room.price); }}
-                                                    className={`p-3 rounded-xl border-2 text-left transition-all relative overflow-hidden ${formData.room_type === `貓-${room.name}` ? 'bg-dream-navy text-white border-dream-navy' : 'bg-white border-gray-200 hover:border-dream-gold'}`}
-                                                >
-                                                    <div className="text-xs font-bold mb-1">{room.name}</div>
-                                                    <div className="text-lg font-bold">${room.price}/晚</div>
-                                                    {room.note && <div className="text-[10px] opacity-70 mt-1 font-medium">{room.note}</div>}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {formData.pet_type === 'dog' && (
-                                    <div className="space-y-2">
-                                        <div className="text-xs font-bold text-dream-gold ml-1">🐶 狗狗專區</div>
-                                        <div className="grid grid-cols-2 gap-3">
-                                            {roomRates.dog.map((room) => (
-                                                <button 
-                                                    key={room.name} 
-                                                    onClick={() => { updateField('room_type', `狗-${room.name}`); updateField('room_price', room.price); }}
-                                                    className={`p-3 rounded-xl border-2 text-left transition-all ${formData.room_type === `狗-${room.name}` ? 'bg-dream-navy text-white border-dream-navy' : 'bg-white border-gray-200 hover:border-dream-gold'}`}
-                                                >
-                                                    <div className="text-xs font-bold mb-1">{room.name}</div>
-                                                    <div className="text-lg font-bold">${room.price}/晚</div>
-                                                    {room.note && <div className="text-[10px] opacity-70 mt-1 font-medium">{room.note}</div>}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                            </section>
-                        )}
 
                         {view === 'boarding' && (
                             <section className="glass-panel p-6 rounded-[32px] space-y-6 animate-slide-down">
