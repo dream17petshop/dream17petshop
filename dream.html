@@ -226,16 +226,16 @@
             </div>
         ));
 
-        // --- Modal Component ---
+// --- Modal Component ---
         const Modal = memo(({ isOpen, onClose, title, children, className = "" }) => {
             if (!isOpen) return null;
             
             return (
-                <div className={`fixed inset-0 z-[100] bg-dream-navy/90 backdrop-blur-sm flex flex-col items-center justify-end md:justify-center p-0 md:p-4 animate-fade-in ${className}`}>
-                    <div className="bg-white w-full md:max-w-lg rounded-t-[32px] md:rounded-[32px] overflow-hidden flex flex-col h-[85vh]">
-                        <div className="p-5 border-b bg-gray-50 flex justify-between items-center">
+                <div className={`fixed inset-0 z-[100] bg-dream-navy/90 backdrop-blur-sm flex flex-col items-center justify-center p-4 animate-fade-in ${className}`}>
+                    <div className="bg-white w-full md:max-w-lg rounded-[32px] overflow-hidden flex flex-col max-h-[85vh] shadow-2xl">
+                        <div className="p-5 border-b bg-gray-50 flex justify-between items-center shrink-0">
                             <h3 className="font-bold text-dream-navy">{title}</h3>
-                            <button onClick={onClose} className="p-2">✕</button>
+                            <button onClick={onClose} className="p-2 hover:bg-gray-200 rounded-full transition-colors">✕</button>
                         </div>
                         <div className="flex-1 overflow-y-auto p-6 text-sm text-gray-600 leading-relaxed space-y-4">
                             {children}
@@ -795,59 +795,98 @@
         ));
 
 const TermsSection = memo(({ formData, updateField, handleStartSignature }) => (
-            <section className="glass-panel p-6 rounded-[32px] space-y-6">
-                <div className="flex items-center gap-3 pb-2 border-b border-gray-100">
-                    <div className="p-2 bg-dream-navy/5 rounded-lg text-dream-navy"><Icons.Pen /></div>
-                    <h3 className="font-bold text-dream-navy">法律條款與簽署</h3>
+    <section className="glass-panel p-6 rounded-[32px] space-y-6">
+        <div className="flex items-center gap-3 pb-2 border-b border-gray-100">
+            <div className="p-2 bg-dream-navy/5 rounded-lg text-dream-navy"><Icons.Pen /></div>
+            <h3 className="font-bold text-dream-navy">法律條款與簽署</h3>
+        </div>
+        
+        <div className="space-y-3">
+            {/* 1. 美容條款按鈕 (固定顯示) */}
+            <button 
+                id="btn-grooming-terms"
+                onClick={() => updateField('showTermsModal', 'grooming')} 
+                className={`w-full p-4 rounded-2xl border-2 flex items-center justify-between group transition-all ${formData.groomingTermsRead ? 'bg-green-50 border-green-200' : 'bg-white border-dream-red/30'}`}>
+                <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${formData.groomingTermsRead ? 'bg-green-100 text-dream-line' : 'bg-red-50 text-dream-red'}`}>
+                        <Icons.Check />
+                    </div>
+                    <div className="text-left">
+                        <div className="font-bold text-sm text-dream-navy">美容服務契約條款</div>
+                        <div className="text-xs text-gray-400">{formData.groomingTermsRead ? '已完成閱讀' : '請點擊詳閱'}</div>
+                    </div>
                 </div>
-                
-                <button id="btn-terms" onClick={()=>updateField('showTermsModal', true)} 
-                    className={`w-full p-4 rounded-2xl border-2 flex items-center justify-between group ${formData.termsRead ? 'bg-green-50 border-green-200' : 'bg-white border-dream-red/30'}`}>
+                <div className="text-xs font-bold px-3 py-1 rounded-full bg-white border">
+                    {formData.groomingTermsRead ? '已同意' : '待閱讀'}
+                </div>
+            </button>
+
+            {/* 2. 住宿條款按鈕 (僅住宿頁面顯示) */}
+            {formData.view === 'boarding' && (
+                <button 
+                    id="btn-boarding-terms"
+                    onClick={() => updateField('showTermsModal', 'boarding')} 
+                    className={`w-full p-4 rounded-2xl border-2 flex items-center justify-between group transition-all animate-slide-down ${formData.boardingTermsRead ? 'bg-green-50 border-green-200' : 'bg-white border-dream-red/30'}`}>
                     <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${formData.termsRead ? 'bg-green-100 text-dream-line' : 'bg-red-50 text-dream-red'}`}>
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${formData.boardingTermsRead ? 'bg-green-100 text-dream-line' : 'bg-red-50 text-dream-red'}`}>
                             <Icons.Check />
                         </div>
                         <div className="text-left">
-                            <div className="font-bold text-sm text-dream-navy">{formData.view === 'boarding' ? '寄宿契約條款' : '美容服務契約條款'}</div>
-                            <div className="text-xs text-gray-400">{formData.termsRead ? '已完成閱讀' : '請點擊詳閱'}</div>
+                            <div className="font-bold text-sm text-dream-navy">住宿/安親服務條款</div>
+                            <div className="text-xs text-gray-400">{formData.boardingTermsRead ? '已完成閱讀' : '請點擊詳閱'}</div>
                         </div>
                     </div>
                     <div className="text-xs font-bold px-3 py-1 rounded-full bg-white border">
-                        {formData.termsRead ? '已同意' : '待閱讀'}
+                        {formData.boardingTermsRead ? '已同意' : '待閱讀'}
                     </div>
                 </button>
-                
-                <div className={`transition-all ${formData.termsRead ? 'opacity-100' : 'opacity-70'}`}>
-                    <div className="text-sm font-bold text-dream-navy mb-2 flex items-center gap-2">
-                        數位簽名 {formData.signature ? <span className="text-dream-line text-xs">(已完成)</span> : <span className="text-dream-red">*</span>}
+            )}
+        </div>
+        
+        {/* 簽名區域 */}
+<div className={`transition-all ${(formData.view === 'grooming' ? formData.groomingTermsRead : (formData.groomingTermsRead && formData.boardingTermsRead)) ? 'opacity-100' : 'opacity-70'}`}>
+            <div className="text-sm font-bold text-dream-navy mb-2 flex items-center gap-2">
+                數位簽名 {formData.signature ? <span className="text-dream-line text-xs">(已完成)</span> : <span className="text-dream-red">*</span>}
+            </div>
+            {formData.signature ? (
+                <div className="space-y-2">
+                    <div className="relative">
+                        <img src={formData.signature} className="w-full h-32 object-contain bg-white rounded-xl border border-dream-gold/30" />
+                        <button onClick={()=>updateField('signature', null)} className="absolute top-2 right-2 p-1 bg-gray-100 rounded-full text-xs">重簽</button>
                     </div>
-                    {formData.signature ? (
-                        <div className="space-y-2">
-                            <div className="relative">
-                                <img src={formData.signature} className="w-full h-32 object-contain bg-white rounded-xl border border-dream-gold/30" />
-                                <button onClick={()=>updateField('signature', null)} className="absolute top-2 right-2 p-1 bg-gray-100 rounded-full text-xs">重簽</button>
-                            </div>
-                            <div className="flex justify-end items-center gap-1 text-[10px] font-bold text-dream-navy/60">
-                                <span>✅ 已簽署</span>
-                                <span>時間：{formData.signature_time}</span>
-                            </div>
-                        </div>
-                    ) : (
-                        <button 
-                            onClick={handleStartSignature} 
-                            className="w-full h-32 bg-white rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 gap-2 hover:bg-gray-50 transition-colors">
-                            <Icons.Pen />
-                            <span className="text-xs font-bold">
-                                {formData.termsRead ? '點擊此處開始簽名' : '請先閱讀上方條款，解鎖簽名功能'}
-                            </span>
-                        </button>
-                    )}
+                    <div className="flex justify-end items-center gap-1 text-[10px] font-bold text-dream-navy/60">
+                        <span>✅ 已簽署</span>
+                        <span>時間：{formData.signature_time}</span>
+                    </div>
                 </div>
-            </section>
-        ));
+            ) : (
+                <button 
+                    onClick={handleStartSignature} 
+                    className="w-full h-32 bg-white rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 gap-2 hover:bg-gray-50 transition-colors">
+                    <Icons.Pen />
+                    <span className="text-xs font-bold">
+{(formData.view === 'grooming' ? formData.groomingTermsRead : (formData.groomingTermsRead && formData.boardingTermsRead)) ? '點擊此處開始簽名' : '請先閱讀上方條款，解鎖簽名功能'}
+                    </span>
+                </button>
+            )}
+        </div>
+    </section>
+));
+
+
 
         // --- Main App Component ---
         const App = () => {
+            // 新增這個函數用來檢查是否所有條款都已讀取
+const isAllTermsRead = useCallback((data) => {
+    if (data.view === 'grooming') {
+        return data.groomingTermsRead;
+    } else if (data.view === 'boarding') {
+        return data.groomingTermsRead && data.boardingTermsRead;
+    }
+    return false;
+}, []);
+
             const [view, setView] = useState('home');
             const [scrolled, setScrolled] = useState(false);
             
@@ -865,7 +904,7 @@ const TermsSection = memo(({ formData, updateField, handleStartSignature }) => (
                 service_type: '', service_tags: [], 
                 // 付款欄位
                 total_amount: '', payment_method: '', deposit: '', balance: '',
-                termsRead: false, highRiskRead: false, signature: null, signature_time: '',
+                groomingTermsRead: false,boardingTermsRead: false, highRiskRead: false, signature: null, signature_time: '',
                 checkInDate: '', checkOutDate: '',
                 room_type: '', room_price: '',
                 barking: '', boardingExp: '', foodGuard: '', peePad: '', vaccine: '', deworming: '',
@@ -895,15 +934,23 @@ const TermsSection = memo(({ formData, updateField, handleStartSignature }) => (
                     setTimeout(()=>el.classList.remove('animate-shake', 'border-red-500'), 1000);
                 }
             }, []);
-
             // 處理簽名開始
-            const handleStartSignature = useCallback(() => {
-                if(!formData.termsRead) { 
-                    shakeElement('btn-terms'); 
-                    return; 
-                }
-                updateField('showSigModal', true);
-            }, [formData.termsRead, shakeElement, updateField]);
+const handleStartSignature = useCallback(() => {
+    // 使用新的檢查函數
+    if(!isAllTermsRead(formData)) { 
+        // 震動提醒
+        const btnId = !formData.groomingTermsRead ? 'btn-grooming-terms' : 'btn-boarding-terms';
+        const el = document.getElementById(btnId);
+        if(el) {
+            el.scrollIntoView({behavior:'smooth', block:'center'});
+            el.classList.add('animate-shake', 'border-red-500');
+            setTimeout(()=>el.classList.remove('animate-shake', 'border-red-500'), 1000);
+        }
+        return; 
+    }
+    updateField('showSigModal', true);
+}, [formData, isAllTermsRead, updateField]);
+
 
             // 處理簽名保存
             const handleSignatureSave = useCallback((sigData) => {
@@ -1125,59 +1172,76 @@ const TermsSection = memo(({ formData, updateField, handleStartSignature }) => (
                         onSave={handleSignatureSave} 
                     />
 
-                    {/* 條款模態框 */}
-                    <Modal 
-                        isOpen={formData.showTermsModal} 
-                        onClose={()=>updateField('showTermsModal', false)} 
-                        title={view === 'boarding' ? '住宿/安親契約條款' : '美容服務契約條款'}
-                    >
-                        <div className="p-3 bg-red-50 text-dream-red text-xs font-bold rounded-xl mb-4 border border-red-100">
-                            飼主應盡告知義務，若因隱瞞病況發生意外或死亡，經法定程序判定店家無疏失，店家不須負損害賠償責任。
-                        </div>
-                        
-                        {view === 'boarding' ? (
-                            <>
-                                <p className="font-bold text-dream-navy border-b pb-1">住宿/安親 簽署聲明與法律約定</p>
-                                <ol className="list-decimal pl-5 space-y-3 marker:text-dream-gold marker:font-bold">
-                                    <li>住宿以晚為單位，入住時間10點-18點前，退房時間18點前，不論安親/美容/洗澡/住宿，超過打烊時間19點，則需住宿旅館一晚。</li>
-                                    <li>住宿期間，請自備飼料，無自備飼料將依照店內提供之飼料為優先；若因換食造成腸胃不適、軟便或腹瀉等症狀，旅館將不負責賠償。</li>
-                                    <li>住宿當日須於本館美容部完成洗護後，方可辦理入住；住宿洗澡費用另計，期間若發現有跳蚤、壁蝨等傳染性蟲蚤，將額外收取除蟲蚤費用及環境清潔費。</li>
-                                    <li>住宿當日飼主需提供身分證件(供本館影印留存)及毛孩預防針手冊備查。</li>
-                                    <li>飼主應於契約終止時將毛孩帶回，逾期三日聯繫不上飼主，將會依照動物保護法第29條第一款將動物交付動保處保管；逾期日期之住宿費用將由飼主全額支付。</li>
-                                    <li>住宿、洗澡、美容、安親期間，飼主若隱瞞毛孩曾有攻擊行為，造成本館人員或毛孩傷亡或財物毀損，所有衍生費用本館有權利向飼主全額求償。</li>
-                                    <li>住宿、洗澡、美容、安親期間，發生寵物吠叫聲持續不止，影響到店內營運及周邊鄰居安寧時，本館將會電話聯繫飼主及緊急連絡人將毛孩帶回。</li>
-                                    <li>住宿期間，如發生身體不適、持續性下痢、或其他疾病，須立即送醫治療，本館將會電話聯繫飼主及緊急連絡人將毛孩帶回；若飼主或緊急連絡人同意由本館人員先將動物送醫治療，若無指定的醫院或病況危急將送往周邊之安欣動物醫院治療，其治療之相關費用將由飼主全額負擔。</li>
-                                    <li>住宿、洗澡、美容、安親期間，飼主須如實告知毛孩身體狀況，若隱瞞病況，造成動物發生意外或死亡，經醫院判定本館無任何疏失行為或毛孩本身具有心臟病、癲癇、氣喘、過敏、慢性疾病及各犬種本身好發之疾病等高度危險疾病者，本館將不負責任何賠償相關事宜。</li>
-                                    <li>住宿、洗澡、美容、安親期間，若發生毛孩走失或人為因素導致受傷或死亡，本館將依法合理賠償，上限30,000元整；毛孩在放風期間因彼此玩耍導致的小傷痕則不在此限內。</li>
-                                    <li>住宿、洗澡、美容、安親期間，店內物品遭到毛孩破壞，如攝影機$3000/台、房間隔間、相關開放物品等，本館有權利向飼主全額求償。</li>
-                                    <li>寵物因年老體虛或本身既有疾病死亡，飼主或緊急聯絡人須在接到通知24小時內領回寵物，超過時間未領回則由本館全權處理，所衍生之費用由飼主全額負擔。如對寵物死亡原因有疑慮，飼主或緊急聯絡人須在24小時內會同至本館指定之動物醫院做鑑定，如無法在24小時內會同做鑑定，則飼主不得有異議。(以通聯記錄為準)。</li>
-                                    <li>有散步需求之寵物，散步時本館會善盡保護之責，若寵物因掙脫牽繩而導致逃跑、受傷、死亡等，本館將不負責任何賠償相關事宜。</li>
-                                    <li>其餘細節將依照行政院農委會定型化契約範本辦理。</li>
-                                    <li>本同意書一式兩份，由飼主與本館各執乙份。因本契約所產生之訴訟，雙方合意將以桃園地方法院為第一審管轄法院。</li>
-                                </ol>
-                            </>
-                        ) : (
-                            <>
-                                <p className="font-bold text-dream-navy border-b pb-1">美容服務 簽署聲明與法律約定</p>
-                                <ol className="list-decimal pl-5 space-y-3 marker:text-dream-gold marker:font-bold">
-                                    <li>第一條(契約目的): 本服務為犬貓美容，不涉及醫療行為;乙方須維持環境安全、通風及清潔。</li>
-                                    <li>第五條(健康告知): 甲方應誠實告知寵物病史與是否具有攻擊性。若因隱瞞導致意外，乙方不負責損害賠償責任；因隱瞞導致乙方人員傷亡、財損等相關損失，乙方將全額向甲方(飼主寵物所有權人)求償。</li>
-                                    <li>第九條(退費規定): 包月服務終止時，預收總額扣除(已使用次數X單次原價)後退費，乙方不額外收取解約手續費。</li>
-                                    <li>第十二條(逾時接回): 飼主應於洗澡美容當日將寵物領回，若於約定時間內未領回，依照價目表公告之安親費額外收費，打烊時仍未接回依照價目表公告之住宿房型收費，房價則依照當日住宿狀況安排，滾動式調整。如經通知三日內未領回，將依照動保法第29條第一款通知主管機關，其餘衍生之費用將由飼主全額支付。</li>
-                                    <li>第十五條(履約保障):預收費用累積金額新台幣一萬元以下，依法免提供履約保障。</li>
-                                    <li>其餘細節將依照行政院農委會定型化契約範本辦理。</li>
-                                    <li>因本契約所產生之訴訟，雙方合意將以桃園地方法院為第一審管轄法院。</li>
-                                </ol>
-                            </>
-                        )}
-                        <div className="h-20"></div>
-                        <div className="p-5 border-t bg-white">
-                            <button onClick={()=>{updateField('termsRead', true); updateField('showTermsModal', false);}} 
-                                className="w-full py-4 bg-dream-navy text-white font-bold rounded-2xl shadow-lg">
-                                我已詳閱並同意上述條款
-                            </button>
-                        </div>
-                    </Modal>
+{/* 條款模態框 */}
+<Modal 
+    isOpen={!!formData.showTermsModal} 
+    onClose={()=>updateField('showTermsModal', false)} 
+    title={formData.showTermsModal === 'boarding' ? '住宿/安親服務條款' : '美容服務契約條款'}
+>
+    {/* 頂部警語 */}
+    <div className="p-3 bg-red-50 text-dream-red text-xs font-bold rounded-xl mb-4 border border-red-100">
+        飼主應盡告知義務，若因隱瞞病況發生意外或死亡，經法定程序判定店家無疏失，店家不須負損害賠償責任。
+    </div>
+    
+    {/* 根據 showTermsModal 的值決定顯示哪個內容 */}
+    {formData.showTermsModal === 'grooming' && (
+        <div className="space-y-4 animate-fade-in">
+            <p className="font-bold text-dream-navy border-b pb-2 bg-white">
+                ✂️ 美容服務 簽署聲明與法律約定
+            </p>
+            <ol className="list-decimal pl-5 space-y-3 marker:text-dream-gold marker:font-bold pb-4">
+                <li>第一條(契約目的): 本服務為犬貓美容，不涉及醫療行為;乙方須維持環境安全、通風及清潔。</li>
+                <li>第五條(健康告知): 甲方應誠實告知寵物病史與是否具有攻擊性。若因隱瞞導致意外，乙方不負責損害賠償責任；因隱瞞導致乙方人員傷亡、財損等相關損失，乙方將全額向甲方(飼主寵物所有權人)求償。</li>
+                <li>第九條(退費規定): 包月服務終止時，預收總額扣除(已使用次數X單次原價)後退費，乙方不額外收取解約手續費。</li>
+                <li>第十二條(逾時接回): 飼主應於洗澡美容當日將寵物領回，若於約定時間內未領回，依照價目表公告之安親費額外收費，打烊時仍未接回依照價目表公告之住宿房型收費，房價則依照當日住宿狀況安排，滾動式調整。如經通知三日內未領回，將依照動保法第29條第一款通知主管機關，其餘衍生之費用將由飼主全額支付。</li>
+                <li>第十五條(履約保障):預收費用累積金額新台幣一萬元以下，依法免提供履約保障。</li>
+                <li>其餘細節將依照行政院農委會定型化契約範本辦理。</li>
+                <li>因本契約所產生之訴訟，雙方合意將以桃園地方法院為第一審管轄法院。</li>
+            </ol>
+        </div>
+    )}
+
+    {formData.showTermsModal === 'boarding' && (
+        <div className="space-y-4 animate-fade-in">
+            <p className="font-bold text-dream-navy border-b pb-2 bg-white">
+                🏠 住宿/安親 簽署聲明與法律約定
+            </p>
+            <ol className="list-decimal pl-5 space-y-3 marker:text-dream-gold marker:font-bold">
+                <li>住宿以晚為單位，入住時間10點-18點前，退房時間18點前，不論安親/美容/洗澡/住宿，超過打烊時間19點，則需住宿旅館一晚。</li>
+                <li>住宿期間，請自備飼料，無自備飼料將依照店內提供之飼料為優先；若因換食造成腸胃不適、軟便或腹瀉等症狀，旅館將不負責賠償。</li>
+                <li>住宿當日須於本館美容部完成洗護後，方可辦理入住；住宿洗澡費用另計，期間若發現有跳蚤、壁蝨等傳染性蟲蚤，將額外收取除蟲蚤費用及環境清潔費。</li>
+                <li>住宿當日飼主需提供身分證件(供本館影印留存)及毛孩預防針手冊備查。</li>
+                <li>飼主應於契約終止時將毛孩帶回，逾期三日聯繫不上飼主，將會依照動物保護法第29條第一款將動物交付動保處保管；逾期日期之住宿費用將由飼主全額支付。</li>
+                <li>住宿、洗澡、美容、安親期間，飼主若隱瞞毛孩曾有攻擊行為，造成本館人員或毛孩傷亡或財物毀損，所有衍生費用本館有權利向飼主全額求償。</li>
+                <li>住宿、洗澡、美容、安親期間，發生寵物吠叫聲持續不止，影響到店內營運及周邊鄰居安寧時，本館將會電話聯繫飼主及緊急連絡人將毛孩帶回。</li>
+                <li>住宿期間，如發生身體不適、持續性下痢、或其他疾病，須立即送醫治療，本館將會電話聯繫飼主及緊急連絡人將毛孩帶回；若飼主或緊急連絡人同意由本館人員先將動物送醫治療，若無指定的醫院或病況危急將送往周邊之安欣動物醫院治療，其治療之相關費用將由飼主全額負擔。</li>
+                <li>住宿、洗澡、美容、安親期間，飼主須如實告知毛孩身體狀況，若隱瞞病況，造成動物發生意外或死亡，經醫院判定本館無任何疏失行為或毛孩本身具有心臟病、癲癇、氣喘、過敏、慢性疾病及各犬種本身好發之疾病等高度危險疾病者，本館將不負責任何賠償相關事宜。</li>
+                <li>住宿、洗澡、美容、安親期間，若發生毛孩走失或人為因素導致受傷或死亡，本館將依法合理賠償，上限30,000元整；毛孩在放風期間因彼此玩耍導致的小傷痕則不在此限內。</li>
+                <li>住宿、洗澡、美容、安親期間，店內物品遭到毛孩破壞，如攝影機$3000/台、房間隔間、相關開放物品等，本館有權利向飼主全額求償。</li>
+                <li>寵物因年老體虛或本身既有疾病死亡，飼主或緊急連絡人須在接到通知24小時內領回寵物，超過時間未領回則由本館全權處理，所衍生之費用由飼主全額負擔。如對寵物死亡原因有疑慮，飼主或緊急聯絡人須在24小時內會同至本館指定之動物醫院做鑑定，如無法在24小時內會同做鑑定，則飼主不得有異議。(以通聯記錄為準)。</li>
+                <li>有散步需求之寵物，散步時本館會善盡保護之責，若寵物因掙脫牽繩而導致逃跑、受傷、死亡等，本館將不負責任何賠償相關事宜。</li>
+                <li>其餘細節將依照行政院農委會定型化契約範本辦理。</li>
+                <li>本同意書一式兩份，由飼主與本館各執乙份。因本契約所產生之訴訟，雙方合意將以桃園地方法院為第一審管轄法院。</li>
+            </ol>
+        </div>
+    )}
+    
+    <div className="p-5 border-t bg-white sticky bottom-0 z-20 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] -mx-6 -mb-6 mt-4">
+        <button onClick={() => {
+            // 根據當前顯示的 Modal 類型，更新對應的已讀狀態
+            if (formData.showTermsModal === 'grooming') {
+                updateField('groomingTermsRead', true);
+            } else if (formData.showTermsModal === 'boarding') {
+                updateField('boardingTermsRead', true);
+            }
+            updateField('showTermsModal', false);
+        }} 
+            className="w-full py-4 bg-dream-navy text-white font-bold rounded-2xl shadow-lg hover:bg-[#4A3D35] active:scale-[0.98] transition-all">
+            我已詳閱並同意上述條款
+        </button>
+    </div>
+</Modal>
+
 
                 </div>
             );
