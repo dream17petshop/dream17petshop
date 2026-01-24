@@ -764,7 +764,7 @@
                                     <input type="password" id="passwordInput" placeholder="請輸入密碼" class="w-full pl-12 pr-4 py-4 rounded-xl glass-input text-lg font-bold text-center tracking-widest placeholder:tracking-normal" autofocus />
                                 </div>
                                 ${state.loginError ? `<p class="text-dream-red text-sm font-bold animate-pulse text-center">${state.loginError}</p>` : ''}
-                                <button type="submit" id="loginButton" data-action="login" disabled="${state.loading}" class="w-full py-4 rounded-[24px] bg-dream-navy text-white text-lg font-bold shadow-xl shadow-dream-navy/30 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2">
+<button type="submit" id="loginButton" data-action="login" ${state.loading ? 'disabled' : ''} class="w-full py-4 rounded-[24px] bg-dream-navy text-white text-lg font-bold shadow-xl shadow-dream-navy/30 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2">
                                     ${state.loading ? '<i data-lucide="loader-2" class="animate-spin"></i>' : '確認登入 <i data-lucide="arrow-right" width="20" height="20"></i>'}
                                 </button>
                                 <button type="button" data-action="reset-login" class="w-full py-2 text-gray-400 hover:text-dream-navy text-sm font-bold transition-colors">
@@ -1743,7 +1743,7 @@
                         closeConfirmModal();
                         break;
                         
-                    case 'execute-action':
+case 'execute-action':
                         const confirmPasswordInput = document.getElementById('confirmPasswordInput');
                         if (confirmPasswordInput) {
                             executeAction(confirmPasswordInput.value);
@@ -1751,8 +1751,15 @@
                         break;
                 }
             });
-        };
 
+            // 防止表單默認提交並支援 Enter 鍵登入
+            document.addEventListener('submit', (e) => {
+                if (e.target.id === 'loginForm') {
+                    e.preventDefault();
+                    handleLogin(e);
+                }
+            });
+        };
         // 事件處理函數
         const setActiveTab = (tab) => {
             state.activeTab = tab;
