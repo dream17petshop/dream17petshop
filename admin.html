@@ -800,9 +800,6 @@ if (!session) return (
                             <button onClick={()=>setView('dashboard')} className={`px-6 py-3 font-bold text-sm flex items-center gap-2 border-b-2 transition-all ${view==='dashboard'?'border-brand-navy text-brand-navy':'border-transparent text-gray-400 hover:text-gray-600'}`}>
                                 <Icon name="bar-chart-2" size={18}/> 數據儀表板
                             </button>
-                            <button onClick={()=>setView('email')} className={`px-6 py-3 font-bold text-sm flex items-center gap-2 border-b-2 transition-all ${view==='email'?'border-brand-navy text-brand-navy':'border-transparent text-gray-400 hover:text-gray-600'}`}>
-                                <Icon name="mail" size={18}/> 郵件紀錄
-                            </button>
                         </div>
 
                         {/* View Content */}
