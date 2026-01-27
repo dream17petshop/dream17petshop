@@ -1153,7 +1153,7 @@
             }
             return new Blob([u8arr], { type: mime });
         };
-// --- 新增：產生合約 HTML (共用函式 - RWD 完整版) ---
+// --- 1. 夢17專屬：產生合約 HTML (完整高風險條款版) ---
         const generateContractHtml = (data, signatureUrl) => {
             const BRAND_NAVY = "#5C4D42";
             const BRAND_GOLD = "#C5A065";
@@ -1161,30 +1161,33 @@
             const BG_CREAM = "#FAF8F5";
             
             const isBoarding = data.view === 'boarding';
-            const isHighRisk = checkHighRisk(data); // 使用現有的檢查函式
+            const isHighRisk = checkHighRisk(data); 
 
             // 輔助顯示函式
             const show = (val) => val || '<span style="color:#ccc;">未填寫</span>';
-            const bool = (val) => val === '是' ? '✅ 是' : '⬜ 否';
             const arr = (val) => Array.isArray(val) && val.length > 0 ? val.join('、') : '無';
 
-            // 1. 條款內容定義 (直接將 React 中的條款文字轉為 HTML)
+            // 1. 一般美容條款 (維持完整)
             const groomingTerms = `
-                <ol style="padding-left: 20px; margin: 0;">
+                <div style="font-weight:bold; color:${BRAND_NAVY}; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;">美容服務 簽署聲明與法律約定</div>
+                <ol style="padding-left: 20px; margin: 0; line-height: 1.6;">
                     <li><strong>第一條(契約目的)：</strong>本服務為犬貓美容，<span style="color:${BRAND_RED}; font-weight:bold; text-decoration:underline;">不涉及醫療行為</span>。</li>
-                    <li><strong>第五條(健康告知)：</strong>甲方應誠實告知寵物病史與是否具有攻擊性。若因隱瞞導致意外，乙方不負責損害賠償責任；因隱瞞導致乙方人員傷亡、財損等損失，乙方將全額向甲方求償。</li>
-                    <li><strong>第九條(退費規定)：</strong>包月服務終止時，預收總額扣除(已使用次數 X 單次原價)後退費。</li>
-                    <li><strong>第十二條(逾時接回)：</strong>若於約定時間內未領回，加收安親費；打烊時仍未接回，則視同住宿一晚計費。如經通知三日內未領回，將依照動保法第29條移交主管機關。</li>
+                    <li><strong>第五條(健康告知)：</strong>甲方應<span style="font-weight:bold; text-decoration:underline;">誠實告知</span>寵物病史與是否具有攻擊性。若因隱瞞導致意外，<span style="color:${BRAND_RED}; font-weight:bold;">乙方不負責損害賠償責任</span>；因隱瞞導致乙方人員傷亡、財損等損失，<span style="color:${BRAND_RED}; font-weight:bold; text-decoration:underline;">乙方將全額向甲方求償</span>。</li>
+                    <li><strong>第九條(退費規定)：</strong>包月服務終止時，預收總額扣除(<span style="font-weight:bold; color:${BRAND_NAVY};">已使用次數 X 單次原價</span>)後退費。</li>
+                    <li><strong>第十二條(逾時接回)：</strong>若於約定時間內未領回，<span style="color:${BRAND_RED}; font-weight:bold;">加收安親費</span>；打烊時仍未接回，則<span style="color:${BRAND_RED}; font-weight:bold;">視同住宿一晚計費</span>。如經通知三日內未領回，將依照<span style="font-weight:bold; text-decoration:underline;">動保法第29條</span>移交主管機關。</li>
                     <li><strong>第十五條(履約保障)：</strong>預收費用累積金額新台幣一萬元以下，依法免提供履約保障。</li>
-                    <li>因本契約所產生之訴訟，雙方合意將以<strong>桃園地方法院</strong>為第一審管轄法院。</li>
+                    <li>其餘細節將依照行政院農委會定型化契約範本辦理。</li>
+                    <li>因本契約所產生之訴訟，雙方合意將以<span style="font-weight:bold;">桃園地方法院</span>為第一審管轄法院。</li>
                 </ol>
             `;
 
+            // 2. 一般住宿條款 (維持完整)
             const boardingTerms = `
-                <div style="background-color: #FFF0F0; padding: 10px; border: 1px solid ${BRAND_RED}; border-radius: 8px; margin-bottom: 10px; font-weight: bold; color: ${BRAND_RED}; font-size: 11px;">
+                <div style="font-weight:bold; color:${BRAND_NAVY}; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px; margin-top:20px;">住宿/安親 簽署聲明與法律約定</div>
+                <div style="margin-bottom:10px; padding:10px; background-color:#FFF0F0; border:1px solid ${BRAND_RED}; border-radius:8px; font-weight:bold; color:${BRAND_RED}; font-size:11px;">
                     非24小時照護聲明：本人知悉且同意，本店無提供夜間照顧服務。若寵物於夜間無人時段發生突發狀況，店家可能無法即時發現或處置，本人願意承擔此風險。
                 </div>
-                <ol style="padding-left: 20px; margin: 0;">
+                <ol style="padding-left: 20px; margin: 0; line-height: 1.6;">
                     <li><strong>計費與進退房：</strong>以「晚」為單位。辦理入住 10:00-18:00，退房於 18:00 前。逾時或打烊未接回將加收費用。</li>
                     <li><strong>自備飼料：</strong>若無自備而由店內提供導致腸胃不適，旅館恕不負責。</li>
                     <li><strong>緊急醫療：</strong>突發疾病須送醫時，相關醫療及交通費用由飼主全額負擔。</li>
@@ -1193,14 +1196,61 @@
                 </ol>
             `;
 
-            const highRiskTerms = `
-                <div style="border: 2px dashed ${BRAND_RED}; padding: 10px; margin-top: 10px;">
-                    <h4 style="margin: 0 0 5px 0; color: ${BRAND_RED};">⚠️ 高風險服務同意書</h4>
-                    <p>本人確認已誠實告知寵物病史(心臟病、癲癇、年老等)。知悉美容/住宿過程中可能因緊張誘發休克或意外。若非乙方故意過失，乙方不負損害賠償責任。如發生緊急狀況，同意乙方優先送往指定醫院處置。</p>
-                </div>
-            `;
+            // 3. 高風險條款 (完整版)
+            let highRiskTerms = '';
+            
+            if (isHighRisk) {
+                // A. 基礎高風險聲明 (美容/住宿皆須顯示)
+                highRiskTerms += `
+                    <div style="border: 2px dashed ${BRAND_RED}; padding: 15px; margin-top: 20px; border-radius: 8px; background-color: #fff;">
+                        <h4 style="margin: 0 0 10px 0; color: ${BRAND_RED}; text-align:center; font-size:14px;">⚠️ 高風險服務風險告知暨同意聲明</h4>
+                        
+                        <div style="font-size:11px; line-height:1.6; color:#333;">
+                            <p style="margin-bottom:8px;">
+                                <strong>一、飼主誠實告知義務</strong><br>
+                                本人（甲方）確認，已就本人所知悉之寵物年齡、過往病史（如心臟病、癲癇、氣喘、關節問題等）、近期手術或治療紀錄、懷孕狀況、過敏反應，以及行為特性，向 貴店（乙方）為完整且真實之說明。如因甲方未告知、未完全告知或提供不實資訊，致乙方難以預見或防範風險發生者，後果由甲方自行承擔，且須賠償因此導致乙方人員受傷之相關費用。
+                            </p>
+                            <p style="margin-bottom:8px;">
+                                <strong>二、高齡與特殊健康狀況之風險告知</strong><br>
+                                本人知悉，高齡、幼齡或患有慢性病之寵物對壓力耐受度較低。美容過程中可能因緊張或體能負荷誘發<span style="color:${BRAND_RED}; font-weight:bold; text-decoration:underline;">休克、舊疾復發或不可預期之意外</span>。本人同意：若不利結果源於寵物自身狀況且乙方無故意過失，<span style="color:${BRAND_RED}; font-weight:bold;">乙方不負損害賠償責任</span>。
+                            </p>
+                            <p style="margin-bottom:8px;">
+                                <strong>三、攻擊性與行為安全防護同意</strong><br>
+                                如寵物出現攻擊行為或過度躁動，本人同意乙方採取必要之防護措施（如戴嘴套）。若經判斷危及安全，乙方得隨時中止服務，並依進度計費。
+                            </p>
+                            <p style="margin-bottom:8px;">
+                                <strong>四、緊急醫療處置同意</strong><br>
+                                服務期間如寵物發生身體不適或緊急狀況，本人同意乙方得優先將寵物送往指定或就近之動物醫院進行處置，費用由本人負擔。
+                            </p>
+                            <p style="margin-bottom:0;">
+                                <strong>五、飼主確認</strong><br>
+                                本人已詳閱並充分理解上述所有內容，確認已就相關風險獲得說明，並於審慎評估後，同意將寵物交付乙方進行服務。
+                            </p>
+                        </div>
+                    </div>
+                `;
 
-            // 2. 組合完整 HTML (含 RWD CSS)
+                // B. 住宿高風險附加條款 (僅住宿且高風險時顯示)
+                if (isBoarding) {
+                    highRiskTerms += `
+                        <div style="border: 2px dashed ${BRAND_RED}; border-top: none; padding: 15px; border-radius: 0 0 8px 8px; background-color: #FFF5F5;">
+                            <h4 style="margin: 0 0 10px 0; color: ${BRAND_RED}; font-size:13px;">🏠 高風險住宿特別約定</h4>
+                            <div style="font-size:11px; line-height:1.6; color:#333;">
+                                <div style="font-weight:bold; color:${BRAND_RED}; margin-bottom:8px;">
+                                    美容洗澡或住宿期間，因基因或本身遺傳問題造成的疾病，或寵物因天生病史、高齡、幼犬貓，因寵物持有人遺漏、隱瞞，或已知風險、仍然堅持美容或住宿，途中若有意外休克或其他等狀況，本店會立即送至附近動物醫院救治。
+                                </div>
+                                <ul style="padding-left:15px; margin:0;">
+                                    <li>寵物若因以上因素導致疾病或死亡等問題發生，都將與夢17精品寵物美容旅館無關，送醫途中或到院治療所產生之相關費用都需由寵物持有人負擔。</li>
+                                    <li>寵物持有人已知本店無24小時之服務，因此住宿期間若於晚上無人照護時，發生問題導致無即時救治，或因寵物本身焦慮、情緒不穩造成自己有傷害發生，都將與本館無關。</li>
+                                    <li>倘若發生法律上之糾紛，本切結書將作為證據呈上相關法律部門。</li>
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            // 4. 組合完整 HTML
             return `
                 <!DOCTYPE html>
                 <html>
@@ -1209,56 +1259,21 @@
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
                     <title>夢17 - 服務契約副本</title>
                     <style>
-                        /* 手機端 RWD 適配 CSS */
+                        /* 手機端 RWD 適配 */
                         @media only screen and (max-width: 600px) {
                             .main-container { width: 100% !important; margin: 10px 0 !important; border-radius: 0 !important; }
                             .section-padding { padding: 20px 15px !important; }
-                            
-                            /* 表格強制變為區塊堆疊 */
-                            .responsive-table, .responsive-table tbody, .responsive-table tr, .responsive-table td { 
-                                display: block !important; 
-                                width: 100% !important; 
-                                box-sizing: border-box; 
-                            }
-                            
-                            .responsive-table td { 
-                                border-bottom: 1px solid #eee; 
-                                padding: 10px 0 !important; 
-                                text-align: left !important;
-                            }
-                            
-                            .responsive-table td:last-child { 
-                                border-bottom: none; 
-                            }
-                            
-                            .summary-table td { 
-                                display: block !important; 
-                                width: 100% !important; 
-                                text-align: left !important; 
-                                padding-bottom: 5px !important;
-                            }
-                            
-                            /* 手機版欄位標題顯示 */
-                            .mobile-label { 
-                                font-size: 11px; 
-                                color: #999; 
-                                display: block; 
-                                margin-bottom: 4px; 
-                                font-weight: bold; 
-                                text-transform: uppercase;
-                                letter-spacing: 1px;
-                            }
-                        }
-                        
-                        /* 電腦版隱藏手機標題 */
-                        @media only screen and (min-width: 601px) {
-                            .mobile-label { display: none; }
+                            .responsive-table tr, .responsive-table td { display: block !important; width: 100% !important; box-sizing: border-box; }
+                            .responsive-table td { border-bottom: 1px solid #eee; padding: 10px 0 !important; }
+                            .responsive-table td:last-child { border-bottom: none; }
+                            .summary-table td { display: block !important; width: 100% !important; text-align: left !important; }
+                            .mobile-label { font-size: 11px; color: #888; display: block; margin-bottom: 2px; font-weight: bold; }
                         }
                     </style>
                 </head>
                 <body style="font-family: sans-serif; line-height: 1.6; color: ${BRAND_NAVY}; background-color: #f4f4f4; margin: 0; padding: 20px;">
                     
-                    <div class="main-container" style="max-width: 800px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                    <div class="main-container" style="max-width: 800px; margin: 20px auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
                         
                         <div style="background-color: ${BRAND_NAVY}; padding: 30px; text-align: center; color: #fff;">
                             <h1 style="margin: 0; font-size: 24px; color: ${BRAND_GOLD}; letter-spacing: 2px;">夢17精品寵物美容旅館</h1>
@@ -1268,17 +1283,14 @@
                         <div class="section-padding" style="padding: 30px;">
                             
                             <div style="background-color: ${BG_CREAM}; border: 1px solid ${BRAND_GOLD}; border-radius: 12px; padding: 20px; margin-bottom: 30px;">
-                                <table class="summary-table" width="100%" cellpadding="5">
+                                <table width="100%" cellpadding="5">
                                     <tr>
                                         <td width="50%"><strong>契約編號：</strong> ${Date.now().toString().slice(-8)}</td>
                                         <td width="50%"><strong>簽署日期：</strong> ${data.signature_time}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>服務類別：</strong> ${isBoarding ? '🏠 住宿/安親' : '✂️ 美容/SPA'}</td>
-                                        <td>
-                                            <strong>${isBoarding ? '本次預算' : '應付總額'}：</strong> 
-                                            <span style="font-size: 18px; color: ${BRAND_RED}; font-weight: bold;">$${data.total_amount || 0}</span>
-                                        </td>
+                                        <td><strong>應付總額：</strong> <span style="font-size: 18px; color: ${BRAND_RED}; font-weight: bold;">$${data.total_amount || 0}</span></td>
                                     </tr>
                                     ${isBoarding ? `<tr><td><strong>入住日期：</strong> ${show(data.checkInDate)}</td><td><strong>退房日期：</strong> ${show(data.checkOutDate)}</td></tr>` : ''}
                                 </table>
@@ -1287,14 +1299,8 @@
                             <h3 style="border-bottom: 2px solid ${BRAND_GOLD}; padding-bottom: 5px; margin-top: 0;">👤 甲方 (飼主資料)</h3>
                             <table class="responsive-table" width="100%" cellpadding="8" style="font-size: 13px; border-collapse: collapse; margin-bottom: 20px;">
                                 <tr style="background:#f9f9f9;">
-                                    <td width="50%">
-                                        <span class="mobile-label">飼主姓名</span>
-                                        <strong>${show(data.owner_name)}</strong> (${data.is_owner === '是' ? '本人' : '非本人'})
-                                    </td>
-                                    <td width="50%">
-                                        <span class="mobile-label">連絡電話</span>
-                                        ${show(data.phone)}
-                                    </td>
+                                    <td width="50%"><span class="mobile-label">飼主姓名</span><strong>${show(data.owner_name)}</strong> (${data.is_owner === '是' ? '本人' : '非本人'})</td>
+                                    <td width="50%"><span class="mobile-label">連絡電話</span>${show(data.phone)}</td>
                                 </tr>
                                 <tr>
                                     <td><span class="mobile-label">電子信箱</span>${show(data.email)}</td>
@@ -1312,76 +1318,59 @@
                             <h3 style="border-bottom: 2px solid ${BRAND_GOLD}; padding-bottom: 5px;">🐾 寵物資料</h3>
                             <table class="responsive-table" width="100%" cellpadding="8" style="font-size: 13px; border-collapse: collapse; margin-bottom: 20px;">
                                 <tr style="background:#f9f9f9;">
-                                    <td width="50%">
-                                        <span class="mobile-label">名字/品種</span>
-                                        <strong>${show(data.pet_name)}</strong> (${data.pet_type==='cat'?'貓':'狗'} / ${show(data.breed)})
-                                    </td>
-                                    <td width="50%">
-                                        <span class="mobile-label">基本資料</span>
-                                        ${data.sex} / ${data.age_value}${data.age_type==='year'?'歲':'個月'} / ${data.weight}kg
-                                    </td>
+                                    <td width="15%">名字/品種</td><td width="35%"><strong>${show(data.pet_name)}</strong> (${data.pet_type==='cat'?'貓':'狗'} / ${show(data.breed)})</td>
+                                    <td width="15%">基本資料</td><td width="35%">${data.sex} / ${data.age_value}${data.age_type==='year'?'歲':'個月'} / ${data.weight}kg</td>
                                 </tr>
                                 <tr>
-                                    <td>
-                                        <span class="mobile-label">健康狀況</span>
-                                        結紮:${data.fix} / 驅蟲:${data.deworming_monthly} / 晶片:${data.chip_status} (${data.chip_id || '無'})
-                                    </td>
-                                    <td>
-                                        <span class="mobile-label">過往病史</span>
-                                        <span style="color:${data.medical_has==='有'?BRAND_RED:'inherit'}">${data.medical_has} (${arr(data.medical_tags)} ${data.medical_other})</span>
+                                    <td>健康狀況</td>
+                                    <td colspan="3">
+                                        結紮:${data.fix} / 驅蟲:${data.deworming_monthly} / 晶片:${data.chip_status} (${data.chip_id || '無'})<br>
+                                        <span style="color:${data.medical_has==='有'?BRAND_RED:'inherit'}">病史: ${data.medical_has} (${arr(data.medical_tags)} ${data.medical_other})</span>
                                     </td>
                                 </tr>
                                 <tr style="background:#f9f9f9;">
-                                    <td colspan="2">
-                                        <span class="mobile-label">個性與外觀</span>
-                                        個性: ${arr(data.social_traits)} ${data.personality_other} <br>
+                                    <td>個性與外觀</td>
+                                    <td colspan="3">
+                                        個性: ${arr(data.social_traits)} ${data.personality_other}<br>
                                         外觀: ${arr(data.physical_check)} ${data.physical_other}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="2">
-                                        <span class="mobile-label">指定醫院</span>
-                                        ${data.clinic || '無'} (電話: ${data.clinic_phone || '-'})
-                                    </td>
+                                    <td>指定醫院</td><td colspan="3">${data.clinic || '無'} (電話: ${data.clinic_phone || '-'})</td>
                                 </tr>
                             </table>
 
                             <h3 style="border-bottom: 2px solid ${BRAND_GOLD}; padding-bottom: 5px;">💰 消費明細與備註</h3>
                             <table class="responsive-table" width="100%" cellpadding="8" style="font-size: 13px; border-collapse: collapse; margin-bottom: 20px;">
                                 <tr style="background:#f9f9f9;">
-                                    <td width="100%" colspan="2">
-                                        <span class="mobile-label">服務項目</span>
-                                        ${data.view === 'boarding' ? '住宿' + (Array.isArray(data.service_tags) && data.service_tags.length > 0 ? '、' + data.service_tags.join('、') : '') : arr(data.service_tags)}
-                                    </td>
+                                    <td width="20%">服務項目</td>
+                                    <td>${data.view === 'boarding' ? '住宿' + (Array.isArray(data.service_tags) && data.service_tags.length > 0 ? '、' + data.service_tags.join('、') : '') : arr(data.service_tags)}</td>
                                 </tr>
-                                ${isBoarding ? `<tr><td colspan="2"><span class="mobile-label">房型/放風</span>${data.room_type} ($${data.room_price}/晚) / ${data.temperament}</td></tr>` : ''}
+                                ${isBoarding ? `<tr><td>房型/放風</td><td>${data.room_type} ($${data.room_price}/晚) / ${data.temperament}</td></tr>` : ''}
+                                <tr style="background:#f9f9f9;">
+                                    <td>付款方式</td>
+                                    <td>${data.payment_method}</td>
+                                </tr>
                                 <tr>
-                                    <td width="50%">
-                                        <span class="mobile-label">付款方式</span>
-                                        ${data.payment_method}
-                                    </td>
-                                    <td width="50%">
-                                        <span class="mobile-label">${isBoarding ? '付款明細' : '總計金額'}</span>
+                                    <td>${isBoarding ? '付款明細' : '總計金額'}</td>
+                                    <td>
                                         ${isBoarding 
                                             ? `訂金：$${data.deposit || 0} / 尾款：$${data.balance || 0}` 
                                             : `<strong style="font-size: 16px; color: ${BRAND_RED};">$${data.total_amount || 0}</strong>`
                                         }
                                     </td>
                                 </tr>
-                                <tr style="background:#f9f9f9;">
-                                    <td colspan="2">
-                                        <span class="mobile-label">備註</span>
-                                        <span style="color:${BRAND_RED};">${data.note || '無'}</span>
-                                    </td>
+                                <tr>
+                                    <td>備註</td>
+                                    <td style="color:${BRAND_RED};">${data.note || '無'}</td>
                                 </tr>
                             </table>
 
                             <h3 style="border-bottom: 2px solid ${BRAND_GOLD}; padding-bottom: 5px;">⚖️ 契約條款與聲明</h3>
                             <div style="font-size: 12px; color: #666; background: #fff; border: 1px solid #eee; padding: 15px; border-radius: 8px;">
                                 ${data.groomingTermsRead ? groomingTerms : ''}
-                                ${data.boardingTermsRead ? '<hr style="border:0; border-top:1px dashed #ccc; margin:15px 0;">' + boardingTerms : ''}
-                                ${isHighRisk ? highRiskTerms : ''}
-                                <p style="color:${BRAND_GOLD}; font-weight:bold; margin-top:10px;">本人已詳閱並同意以上所有內容。</p>
+                                ${data.boardingTermsRead ? boardingTerms : ''}
+                                ${highRiskTerms}
                             </div>
 
                             <div style="margin-top: 30px; background-color: #f0f0f0; padding: 15px; border-radius: 8px; font-size: 12px; color: #555;">
@@ -1392,14 +1381,14 @@
                                 指定醫療院所：青谷動物醫院 (03-287-7119)
                             </div>
 
-                            <div style="margin-top: 40px; text-align: center; border-top: 2px dashed #ccc; padding-top: 25px;">
-                                <div style="font-size: 14px; font-weight: bold; margin-bottom: 15px;">甲方 (客戶) 簽署確認</div>
-                                <img src="${signatureUrl}" style="max-height: 80px; max-width: 100%; border-bottom: 1px solid #000;" />
-                                <div style="font-size: 11px; color: #999; margin-top: 10px;">簽署時間：${data.signature_time}</div>
+                            <div style="margin-top: 40px; text-align: center; border-top: 2px dashed #ccc; padding-top: 20px;">
+                                <p style="font-weight: bold; margin-bottom: 10px;">甲方 (客戶) 簽署確認：</p>
+                                <img src="${signatureUrl}" style="max-height: 100px; max-width: 300px; border-bottom: 1px solid #000;" />
+                                <p style="font-size: 12px; color: #999; margin-top: 5px;">簽署時間：${data.signature_time}</p>
                             </div>
 
                         </div>
-                        <div style="background-color: ${BRAND_NAVY}; color: rgba(255,255,255,0.4); text-align: center; padding: 15px; font-size: 10px;">
+                        <div style="background-color: ${BRAND_NAVY}; color: #aaa; text-align: center; padding: 10px; font-size: 11px;">
                             &copy; 2026 夢17精品寵物美容旅館. All Rights Reserved.
                         </div>
                     </div>
